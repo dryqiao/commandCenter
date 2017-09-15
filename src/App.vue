@@ -54,7 +54,7 @@
           },{
               id : 2,
               name : '布局管理',
-              link:'/standardwork'
+              link:'/layout'
             },{
               id : 3,
               name : '预案管理',

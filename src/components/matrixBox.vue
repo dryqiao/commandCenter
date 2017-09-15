@@ -12,11 +12,10 @@
 export default {
   data(){
       return {
-          oFormData:''
       }
   },
-  created() {
-      this.oFormData = localStorage.getItem('layout')
+  props : {
+      oFormData: Object
   },
   methods : {
       
