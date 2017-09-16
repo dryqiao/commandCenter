@@ -5,7 +5,8 @@ import Router from 'vue-router'
 import scenery from '../components/scenery'
 import layout from '../components/matrix'
 Vue.use(Router)
-
+//布景scenery
+//布局layout/2级
 export default new Router({
   routes: [
     {
