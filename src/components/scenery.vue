@@ -1,31 +1,30 @@
 <template>
     <div class="scenery">
-        <div v-for="(item,index) in matrixData" :key="index" class="box"
-            @mouseover="closebtn=index"
-            @mouseleave="closebtn=null"
-            @click="matrixClickHandler(index)">
-            <Button :class="{hide:closebtn !== index}" 
-                type="primary" shape="circle" icon="close" 
-                class="btn_close" @click="handlerDelete(index)">
+        <div v-for="(item,index) in matrixData" :key="index" class="box" @mouseover="closebtn=index" @mouseleave="closebtn=null">
+            <Button :class="{hide:closebtn !== index}" type="primary" shape="circle" icon="close" class="btn_close" @click.stop="handlerDelete(index)">
             </Button>
-            <matrixBox :oFormData="item"></matrixBox>
+            <!-- <div @click="matrixClickHandler(index)"> -->
+            <matrixBox :oFormData="item" @click="matrixClickHandler(index)"></matrixBox>
+            <!-- </div> -->
         </div>
 
         <div class="add">
             <Button class="add_btn" type="primary" @click="isShow = true">
                 <Icon type="plus-round"></Icon>
             </Button>
-            <div class="text"><span>新建布景</span></div>
+            <div class="text">
+                <span>新建布景</span>
+            </div>
         </div>
         <Modal v-model="isShow" title="新建布景" @on-ok="handlerSubmit">
-            <Form :model="formData" label-position="left" :label-width="40">
-                <FormItem label="名称">
+            <Form :model="formData" :rules="ruleValidate" label-position="left" :label-width="60">
+                <FormItem label="名称" prop="name">
                     <Input v-model="formData.name" autofocus></Input>
                 </FormItem>
-                <FormItem label="行数">
+                <FormItem label="行数" prop="row">
                     <Input v-model="formData.row" number></Input>
                 </FormItem>
-                <FormItem label="列数">
+                <FormItem label="列数" prop="col">
                     <Input v-model="formData.col" number></Input>
                 </FormItem>
             </Form>
@@ -33,11 +32,15 @@
     </div>
 </template>
 <script>
-import matrixBox from './matrixBox'
+import matrixBox from './matrix_box'
 export default {
     data() {
         return {
-            matrixData: [],
+            matrixData: [{
+                name: 'aaa',
+                row: 3,
+                col: 3,
+            }],
             closebtn: false,
             isShow: false,
             modal1: false,
@@ -45,8 +48,21 @@ export default {
                 name: '',
                 row: '',
                 col: '',
+            },
+            ruleValidate: {
+                name: [
+                    { required: true, message: '姓名不能为空', trigger: 'blur' }
+                ],
+                row: [
+                    { required: true,type: "number", message: '行数不能为空', trigger: 'blur' },
+                ],
+                col: [
+                    { required: true,type: "number", message: '列数不能为空', trigger: 'blur' }
+                ]
             }
         }
+    },
+    created() {
     },
     methods: {
         handlerSubmit() {
@@ -60,10 +76,12 @@ export default {
         },
         handlerDelete(index) {
             this.matrixData.splice(index, 1)
+
         },
         matrixClickHandler(index) {
-            localStorage.setItem('layout',this.matrixData[index])
-            this.$router.push('/layout')
+            console.log(111);
+            localStorage.setItem('layout', this.matrixData[index])
+            this.$router.push('/layout/config')
         }
     },
     components: {
@@ -88,7 +106,8 @@ export default {
             position: absolute;
             right: -5px;
             top: -5px;
-            &.hide{
+            z-index: 999;
+            &.hide {
                 display: none
             }
         }
