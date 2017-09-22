@@ -3,9 +3,8 @@
         <div v-for="(item,index) in matrixData" :key="index" class="box" @mouseover="closebtn=index" @mouseleave="closebtn=null">
             <Button :class="{hide:closebtn !== index}" type="primary" shape="circle" icon="close" class="btn_close" @click.stop="handlerDelete(index)">
             </Button>
-            <!-- <div @click="matrixClickHandler(index)"> -->
-            <matrixBox :oFormData="item" @click="matrixClickHandler(index)"></matrixBox>
-            <!-- </div> -->
+            <div>{{item}}</div>
+            <matrixBox :oMatrixData="Object.assign(item)" ></matrixBox>
         </div>
 
         <div class="add">
@@ -17,15 +16,15 @@
             </div>
         </div>
         <Modal v-model="isShow" title="新建布景" @on-ok="handlerSubmit">
-            <Form :model="formData" :rules="ruleValidate" label-position="left" :label-width="60">
+            <Form :model="oFormData" :rules="ruleValidate" label-position="left" :label-width="60">
                 <FormItem label="名称" prop="name">
-                    <Input v-model="formData.name" autofocus></Input>
+                    <Input v-model="oFormData.name" autofocus></Input>
                 </FormItem>
                 <FormItem label="行数" prop="row">
-                    <Input v-model="formData.row" number></Input>
+                    <Input v-model="oFormData.row" number></Input>
                 </FormItem>
                 <FormItem label="列数" prop="col">
-                    <Input v-model="formData.col" number></Input>
+                    <Input v-model="oFormData.col" number></Input>
                 </FormItem>
             </Form>
         </Modal>
@@ -44,7 +43,7 @@ export default {
             closebtn: false,
             isShow: false,
             modal1: false,
-            formData: {
+            oFormData: {
                 name: '',
                 row: '',
                 col: '',
@@ -67,8 +66,8 @@ export default {
     methods: {
         handlerSubmit() {
             //深拷贝，否则会双向绑定
-            this.matrixData.push(Object.assign({}, this.formData))
-            this.formData = {
+            this.matrixData.push(Object.assign({}, this.oFormData))
+            this.oFormData = {
                 name: '',
                 row: '',
                 col: '',
@@ -76,12 +75,6 @@ export default {
         },
         handlerDelete(index) {
             this.matrixData.splice(index, 1)
-
-        },
-        matrixClickHandler(index) {
-            console.log(111);
-            localStorage.setItem('layout', this.matrixData[index])
-            this.$router.push('/layout/config')
         }
     },
     components: {

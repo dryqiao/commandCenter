@@ -1,14 +1,14 @@
 <template>
     <div class="matrix-box">
-        <div class="table_box">
+        <div class="table_box" @click="matrixClickHandler">
             <table>
-                <tr v-for="(tr,index) in oFormData.row || 3" :key="index">
-                    <td v-for="(td,index) in oFormData.col || 3" :key="index"></td>
+                <tr v-for="(tr,index) in oMatrixData.row || 3" :key="index">
+                    <td v-for="(td,index) in oMatrixData.col || 3" :key="index"></td>
                 </tr>
             </table>
         </div>
         <div class="text">
-            <Input type="text" v-model="oFormData.name"></Input>
+            <Input type="text" v-model="oMatrixData.name"></Input>
         </div>
     </div>
 </template>
@@ -19,10 +19,16 @@ export default {
         }
     },
     props: {
-        oFormData: Object
+        oMatrixData: Object
+    },
+    created() {
     },
     methods: {
-
+        matrixClickHandler() {
+            console.log(this.oMatrixData)
+            localStorage.setItem('layout', JSON.stringify(this.oMatrixData))
+            this.$router.push('/layout/config')
+        }
     }
 }
 </script>

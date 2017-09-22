@@ -3,7 +3,7 @@
         <div v-for="(item,index) in matrixData" :key="index" class="box"
             @mouseover="closebtn=index"
             @mouseleave="closebtn=null">
-            <matrixBox :oFormData="item" @click.stop="matrixClickHandler(index)"></matrixBox>
+            <matrixBox :oMatrixData="item" @click.stop="matrixClickHandler(index)"></matrixBox>
         </div>
     </div>
 </template>
@@ -24,23 +24,7 @@ export default {
                 name: '',
                 row: '',
                 col: '',
-            },
-            formValidate: {
-                    name: '',
-                    row: '',
-                    col: ''
-                },
-                ruleValidate: {
-                    name: [
-                        { required: true, message: '姓名不能为空', trigger: 'blur' }
-                    ],
-                    row: [
-                        { required: true, message: '邮箱不能为空', trigger: 'blur' },
-                        { type: 'email', message: '邮箱格式不正确', trigger: 'blur' }
-                    ],
-                    col: [
-                        { required: true, message: '请选择城市', trigger: 'change' }
-                ]}
+            }
         }
     },
     created() {

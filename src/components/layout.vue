@@ -4,19 +4,7 @@
     </div>
 </template>
 <script>
-import matrixBox from './matrix_box'
 export default {
-    data() {
-        return {
-           
-        }
-    },
-    methods: {
-      
-    },
-    components: {
-        matrixBox
-    }
 }
 </script>
 
