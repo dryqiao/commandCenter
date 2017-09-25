@@ -3,7 +3,6 @@
         <div v-for="(item,index) in matrixData" :key="index" class="box" @mouseover="closebtn=index" @mouseleave="closebtn=null">
             <Button :class="{hide:closebtn !== index}" type="primary" shape="circle" icon="close" class="btn_close" @click.stop="handlerDelete(index)">
             </Button>
-            <div>{{item}}</div>
             <matrixBox :oMatrixData="Object.assign(item)" ></matrixBox>
         </div>
 
