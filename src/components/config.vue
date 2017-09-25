@@ -6,7 +6,7 @@
                 <tr v-for="(tr,rowIndex) in oConfigData.row || 3" :key="rowIndex">
                     <td v-for="(td,colIndex) in oConfigData.col || 3" :key="colIndex" @click="tdClickHandler(rowIndex,colIndex)" 
                     @click.ctrl="tdClickChooseHandler(rowIndex,colIndex)" 
-                    @mousemove.prevent.stop="slideHandler(1 + rowIndex * (oConfigData.col)+colIndex)" 
+                    @mousemove="slideHandler(1 + rowIndex * (oConfigData.col)+colIndex)" 
                     :class="{choose:nIndex == 1 + rowIndex * (oConfigData.col)+colIndex||
                     mixSelectedTds.indexOf(1 + rowIndex * (oConfigData.col)+colIndex)!=-1}">
                         <div class="tag">
@@ -166,14 +166,12 @@ export default {
         tdClickHandler: function(rowIndex, colIndex) {
             let _index = rowIndex * (this.oConfigData.col) + colIndex + 1,//单元格索引
                 mixIndex = this.mixSelectedTds.indexOf(_index)//在合并单元格中的索引
-            if (mixIndex !== -1) {
-                this.mixSelectedTds = []
-            }
+            
             if (this.nIndex == _index) {
                 this.nIndex = 0
-            }
-            if(this.nIndex !== _index && mixIndex == -1){
-                this.nIndex = _index
+            }else{
+                    this.mixSelectedTds = []
+                    this.nIndex = _index                    
             }
         },
         slideHandler: function(nIndex) {
@@ -183,6 +181,8 @@ export default {
                 }else{
                     this.mixSelectedTds.splice(this.mixSelectedTds.indexOf(nIndex),1)
                 }
+            }else{
+                this.mixSelectedTds.splice(this.mixSelectedTds.indexOf(nIndex),1)
             }
         },
         tdClickChooseHandler: function(rowIndex, colIndex) {
