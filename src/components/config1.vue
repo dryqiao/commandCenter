@@ -3,19 +3,24 @@
         <!-- 配置矩阵 -->
         <div class="matrix_wrapper">
             <table>
-                    <!-- @click.ctrl="tdClickChooseHandler(rowIndex,colIndex)"                  -->
-                <tr v-for="(tr,rowIndex) in oConfigData.row || 3" :key="rowIndex">
-                    <td v-for="(td,colIndex) in oConfigData.col || 3" :key="colIndex" 
-                    @click.stop="tdClickHandler(rowIndex,colIndex)" 
-                    @mousedown.right.prevent="tdRightClickHandler(rowIndex,colIndex)"
-                    @mousemove.stop="slideHandler(rowIndex,colIndex)" 
-                    :class="{choose:nIndex == 1 + rowIndex * (oConfigData.col)+colIndex||
-                    mixSelectedTds.indexOf(1 + rowIndex * (oConfigData.col)+colIndex)!=-1}">
-                        <div class="tag">
-                            <span>{{1 + rowIndex * (oConfigData.col)+colIndex}}</span>
-                        </div>
-                    </td>
-                </tr>
+                <template v-for="(tr,rowIndex) in oConfigData">
+                    <tr :key="rowIndex">
+                        <td v-for="(td,colIndex) in tr.col" 
+                        v-if="!td.mix"
+                        :key="colIndex"
+                        :rowspan="td.row"
+                        :colspan="td.col"
+                        :class="{mix:td.mix}">
+                            <Cell 
+                            :td="td" 
+                            :rowIndex="rowIndex" 
+                            :colIndex="colIndex"
+                            :size="tr.size"
+                            v-on:tdClick="tdClickHandler"></Cell>
+                        </td>
+                    </tr>
+                </template>
+
             </table>
         </div>
         <!-- 模块列表 -->
@@ -27,7 +32,7 @@
                         {{oMouduleData.text}}
                     </template>
                     <MenuItem v-for="(oList,index1) in oMouduleData.lists" :key="index1" :name="oList.name||0"> {{oList.text}}
-                    <Input v-if="oList.input" v-model="url_input"></Input>
+                    <Input v-if="oList.input" v-model="url"></Input>
                     <Upload v-if="oList.upload" action="//jsonplaceholder.typicode.com/posts/">
                         <Button type="ghost" icon="ios-cloud-upload-outline">上传文件</Button>
                     </Upload>
@@ -37,14 +42,17 @@
             </Menu>
         </div>
         <!-- 右键列表 -->
-        <div v-show="rightList" 
-        class="event_list"
-        @mouseover="listOnBlur"
-        @mouseout="listBlurHandler">
+        <div v-show="rightList" class="event_list" @mouseover="listOnBlur" @mouseout="listBlurHandler">
             <ul>
-                <li @click.stop="mixHandler">合并<Icon type="chevron-right"></Icon></li>
-                <li @click.stop="reductHandler">还原<Icon type="chevron-right"></Icon></li>
-                <li @click.stop="splitHandler">拆分<Icon type="chevron-right"></Icon></li>
+                <li @click.stop="mixHandler">合并
+                    <Icon type="chevron-right"></Icon>
+                </li>
+                <li @click.stop="reductHandler">还原
+                    <Icon type="chevron-right"></Icon>
+                </li>
+                <li @click.stop="splitHandler">拆分
+                    <Icon type="chevron-right"></Icon>
+                </li>
             </ul>
         </div>
         <!-- 按钮 -->
@@ -59,12 +67,14 @@
     </div>
 </template>
 <script>
+    import Cell from './cell'
+
 export default {
     data() {
         return {
-            rightList:true,
+            url:'',
+            rightList: true,
             oConfigData: {},
-            nIndex: 0,
             aoColumns: [
                 {
                     title: '序号',
@@ -166,7 +176,6 @@ export default {
                     }]
                 }
             ],
-            url_input: '',
             mixSelectedTds: [],
             aoMixData: []
         }
@@ -175,63 +184,64 @@ export default {
     },
     created() {
         this.oConfigData = JSON.parse(localStorage.getItem('layout'))
+        
+    },
+    mounted() {
+        let _size = this.oConfigData[0].size[0]
+        for(var i = 0;i < _size; i++){
+             this.aoMixData[i] = new Array;
+        }
     },
     methods: {
-        tdClickHandler: function(rowIndex, colIndex) {
-            let _index = rowIndex * (this.oConfigData.col) + colIndex + 1,//单元格索引
-                mixIndex = this.mixSelectedTds.indexOf(_index)//在合并单元格中的索引
-            if (this.nIndex == _index) {
-                this.nIndex = 0
-            }else{
-                    this.mixSelectedTds = []
-                    this.nIndex = _index
-            }
+        tdClickHandler:function(_data){
+            this.aoMixData[_data[0]].push(_data[1])
         },
-        slideHandler: function(rowIndex,colIndex) {
-            let _index = rowIndex * (this.oConfigData.col) + colIndex + 1
-            if (event.which === 1 && this.mixSelectedTds.indexOf(_index) === -1) {
-                    this.mixSelectedTds.push(_index)
-                    // console.log('slideHandler',this.mixSelectedTds)
-            }
-        },
-        tdClickChooseHandler: function(rowIndex, colIndex) {
-            let _index = rowIndex * (this.oConfigData.col) + colIndex + 1
-            if (this.mixSelectedTds.indexOf(_index) === -1) {
-                this.mixSelectedTds.push(_index)
-                // console.log('tdClickChooseHandler',this.mixSelectedTds)
-            }
-        },
-        tdRightClickHandler: function(rowIndex, colIndex){
+        tdRightClickHandler: function(rowIndex, colIndex) {
             console.log('you')
             let _index = rowIndex * (this.oConfigData.col) + colIndex + 1
             this.rightList = true
         },
-        listOnBlur:function(){
+        listOnBlur: function() {
             this.rightList = true
         },
-        listBlurHandler:function(){
-            console.log('blur')
-            // setTimeout(()=>this.rightList = !this.rightList,500)
-            
+        listBlurHandler: function() {
         },
-        mixHandler:function(){
-            console.log('mix')
-            let _index = this.mixSelectedTds.concat(this.nIndex).sort()
-            this.aoMixData[_index[0]]={
-                row : 2,
-                col : 2
+        mixHandler: function() {
+            let singleIndex = null//记录单行时行索引值
+            // 获取非空的行
+            let rowList=this.aoMixData.filter((_value,index)=>{
+                if(_value.length>0){
+                    singleIndex = index
+                    return true
+                }
+            })
+            if(rowList.length === 1 && rowList[0].length>1){
+                // 单行多个格子合并
+                rowList[0].sort().forEach((_num,index)=>{
+                    let _mix = this.oConfigData[singleIndex].col[_num]
+                    console.log(_num,index)
+                    if(index === 0){
+                        _mix.mix = false
+                        _mix.col = rowList[0].length
+                    }else{
+                        _mix.mix = true//true表示被融合了，隐藏掉
+                        _mix.col = 0
+                    }
+                });
             }
-        },
-        reductHandler:function(){
 
         },
-        splitHandler:function(){
+        reductHandler: function() {
+
+        },
+        splitHandler: function() {
 
         }
     },
     computed: {
     },
     components: {
+        Cell
     }
 }
 </script>
@@ -300,19 +310,19 @@ export default {
             background-color: #3f8faa;
         }
     }
-    .event_list{
+    .event_list {
         position: absolute;
         top: 100px;
         left: 100px;
         border: 1px solid #cccccc;
-        li{
+        li {
             width: 100px;
             height: 36px;
             line-height: 36px;
             text-align: center;
             cursor: pointer;
-            &:hover{
-                color:#ffffff;
+            &:hover {
+                color: #ffffff;
                 background: #3f91a9;
             }
         }

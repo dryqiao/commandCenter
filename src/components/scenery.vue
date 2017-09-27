@@ -1,9 +1,13 @@
 <template>
     <div class="scenery">
         <div v-for="(item,index) in matrixData" :key="index" class="box" @mouseover="closebtn=index" @mouseleave="closebtn=null">
-            <Button :class="{hide:closebtn !== index}" type="primary" shape="circle" icon="close" class="btn_close" @click.stop="handlerDelete(index)">
+            <Button :class="{hide:closebtn !== index}" type="primary" 
+                shape="circle" 
+                icon="close" 
+                class="btn_close" 
+                @click.stop="handlerDelete(index)">
             </Button>
-            <matrixBox :oMatrixData="Object.assign(item)" ></matrixBox>
+            <matrixBox :oMatrixData="Array.from(item)"></matrixBox>
         </div>
 
         <div class="add">
@@ -34,11 +38,70 @@ import matrixBox from './matrix_box'
 export default {
     data() {
         return {
-            matrixData: [{
-                name: 'aaa',
-                row: 3,
-                col: 3,
-            }],
+            matrixData: [
+                [
+                    {
+                        "size": [3, 3],
+                        "col": [
+                            {
+                                "mix": false,
+                                "content": "",
+                                "col": 0,
+                                "row": 0
+                            }, {
+                                "mix": false,
+                                "content": "",
+                                "col": 0,
+                                "row": 0
+                            }, {
+                                "mix": false,
+                                "content": "",
+                                "col": 0,
+                                "row": 0
+                            }
+                        ]
+                    }, {
+                        "size": [3, 3],
+                        "col": [
+                            {
+                                "mix": false,
+                                "content": "",
+                                "col": 0,
+                                "row": 0
+                            }, {
+                                "mix": false,
+                                "content": "",
+                                "col": 0,
+                                "row": 0
+                            }, {
+                                "mix": false,
+                                "content": "",
+                                "col": 0,
+                                "row": 0
+                            }
+                        ]
+                    }, {
+                        "size": [3, 3],
+                        "col": [
+                            {
+                                "mix": false,
+                                "content": "",
+                                "col": 0,
+                                "row": 0
+                            }, {
+                                "mix": false,
+                                "content": "",
+                                "col": 0,
+                                "row": 0
+                            }, {
+                                "mix": false,
+                                "content": "",
+                                "col": 0,
+                                "row": 0
+                            }
+                        ]
+                    }]
+            ],
             closebtn: false,
             isShow: false,
             modal1: false,
@@ -52,10 +115,10 @@ export default {
                     { required: true, message: '姓名不能为空', trigger: 'blur' }
                 ],
                 row: [
-                    { required: true,type: "number", message: '行数不能为空', trigger: 'blur' },
+                    { required: true, type: "number", message: '行数不能为空', trigger: 'blur' },
                 ],
                 col: [
-                    { required: true,type: "number", message: '列数不能为空', trigger: 'blur' }
+                    { required: true, type: "number", message: '列数不能为空', trigger: 'blur' }
                 ]
             }
         }

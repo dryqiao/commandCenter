@@ -2,8 +2,8 @@
     <div class="matrix-box">
         <div class="table_box" @click="matrixClickHandler">
             <table>
-                <tr v-for="(tr,index) in oMatrixData.row || 3" :key="index">
-                    <td v-for="(td,index) in oMatrixData.col || 3" :key="index"></td>
+                <tr v-for="(tr,index) in oMatrixData || 3" :key="index">
+                    <td v-for="(td,index) in tr.col || 3" :key="index"></td>
                 </tr>
             </table>
         </div>
@@ -19,9 +19,12 @@ export default {
         }
     },
     props: {
-        oMatrixData: Object
+        oMatrixData: Array
     },
     created() {
+    },
+    mounted(){
+        console.log(this.oMatrixData)
     },
     methods: {
         matrixClickHandler() {
