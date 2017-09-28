@@ -38,70 +38,68 @@ import matrixBox from './matrix_box'
 export default {
     data() {
         return {
-            matrixData: [
+            matrixData: [[
                 [
                     {
-                        "size": [3, 3],
-                        "col": [
-                            {
-                                "mix": false,
-                                "content": "",
-                                "col": 0,
-                                "row": 0
-                            }, {
-                                "mix": false,
-                                "content": "",
-                                "col": 0,
-                                "row": 0
-                            }, {
-                                "mix": false,
-                                "content": "",
-                                "col": 0,
-                                "row": 0
-                            }
-                        ]
-                    }, {
-                        "size": [3, 3],
-                        "col": [
-                            {
-                                "mix": false,
-                                "content": "",
-                                "col": 0,
-                                "row": 0
-                            }, {
-                                "mix": false,
-                                "content": "",
-                                "col": 0,
-                                "row": 0
-                            }, {
-                                "mix": false,
-                                "content": "",
-                                "col": 0,
-                                "row": 0
-                            }
-                        ]
-                    }, {
-                        "size": [3, 3],
-                        "col": [
-                            {
-                                "mix": false,
-                                "content": "",
-                                "col": 0,
-                                "row": 0
-                            }, {
-                                "mix": false,
-                                "content": "",
-                                "col": 0,
-                                "row": 0
-                            }, {
-                                "mix": false,
-                                "content": "",
-                                "col": 0,
-                                "row": 0
-                            }
-                        ]
-                    }]
-            ],
+                        "mix": false,
+                        "content": "",
+                        "col": 0,
+                        "row": 0
+                    },
+                    {
+                        "mix": false,
+                        "content": "",
+                        "col": 0,
+                        "row": 0
+                    },
+                    {
+                        "mix": false,
+                        "content": "",
+                        "col": 0,
+                        "row": 0
+                    }
+                ],
+                [
+                    {
+                        "mix": false,
+                        "content": "",
+                        "col": 0,
+                        "row": 0
+                    },
+                    {
+                        "mix": false,
+                        "content": "",
+                        "col": 0,
+                        "row": 0
+                    },
+                    {
+                        "mix": false,
+                        "content": "",
+                        "col": 0,
+                        "row": 0
+                    }
+                ],
+                [
+                    {
+                        "mix": false,
+                        "content": "",
+                        "col": 0,
+                        "row": 0
+                    },
+                    {
+                        "mix": false,
+                        "content": "",
+                        "col": 0,
+                        "row": 0
+                    },
+                    {
+                        "mix": false,
+                        "content": "",
+                        "col": 0,
+                        "row": 0
+                    }
+                ]
+            ]],
             closebtn: false,
             isShow: false,
             modal1: false,

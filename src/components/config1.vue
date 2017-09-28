@@ -2,10 +2,12 @@
     <div class="matrix_config">
         <!-- 配置矩阵 -->
         <div class="matrix_wrapper">
-            <table>
+            <table @mousedown="mouseDownHandler"
+                    @mousemove.stop="mouseMoveHandler"
+                    @mouseup="mouseUpHandler">
                 <template v-for="(tr,rowIndex) in oConfigData">
                     <tr :key="rowIndex">
-                        <td v-for="(td,colIndex) in tr.col" 
+                        <td v-for="(td,colIndex) in tr" 
                         v-if="!td.mix"
                         :key="colIndex"
                         :rowspan="td.row"
@@ -15,14 +17,18 @@
                             :td="td" 
                             :rowIndex="rowIndex" 
                             :colIndex="colIndex"
-                            :size="tr.size"
-                            v-on:tdClick="tdClickHandler"></Cell>
+                            :size="tr.length"
+                            v-on:tdClick="tdClickHandler"
+                            v-on:tdMouseDown="tdMouseDownHandler"
+                            v-on:tdMouseUp="tdMouseUpHandler"></Cell>
                         </td>
                     </tr>
                 </template>
 
             </table>
         </div>
+        <div class="dashed_box" :style="styleBox" :class="{hide:box_hide}"></div>
+
         <!-- 模块列表 -->
         <div class="moudule_wrapper">
             <Menu>
@@ -72,9 +78,16 @@
 export default {
     data() {
         return {
+            box_hide: true,
+            styleBox:{
+                left:'',
+                top:'',
+                width:'',
+                height:''
+            },
             url:'',
             rightList: true,
-            oConfigData: {},
+            oConfigData: [],
             aoColumns: [
                 {
                     title: '序号',
@@ -177,7 +190,11 @@ export default {
                 }
             ],
             mixSelectedTds: [],
-            aoMixData: []
+            aoMixData: [],
+            firstTd:[],
+            nowSelectedTds:[],
+            nowSelectedSize:[],
+            nowFirstTd:[],
         }
     },
     props: {
@@ -187,19 +204,58 @@ export default {
         
     },
     mounted() {
-        let _size = this.oConfigData[0].size[0]
+        let _size = this.oConfigData.length
         for(var i = 0;i < _size; i++){
-             this.aoMixData[i] = new Array;
+             this.aoMixData[i] = new Array
+             this.nowSelectedTds[i] = new Array
         }
     },
     methods: {
-        tdClickHandler:function(_data){
-            this.aoMixData[_data[0]].push(_data[1])
+        mouseDownHandler:function(){
+            this.styleBox.left = event.clientX+'px'
+            this.styleBox.top = event.clientY+'px'
         },
-        tdRightClickHandler: function(rowIndex, colIndex) {
-            console.log('you')
-            let _index = rowIndex * (this.oConfigData.col) + colIndex + 1
-            this.rightList = true
+        mouseMoveHandler:function(){
+            this.box_hide = false            
+            if(event.which == 1){
+                this.styleBox.width = event.clientX - Number(this.styleBox.left.split('px')[0]) + 'px'
+                this.styleBox.height = event.clientY - Number(this.styleBox.top.split('px')[0]) + 'px'
+            }
+        },
+        mouseUpHandler:function(){
+            this.box_hide = false
+            this.styleBox.width = '0px'
+            this.styleBox.height = '0px'
+        },
+        tdClickHandler:function(_data){
+            if(_data[0]){
+                this.aoMixData[_data[1]].push(_data[2])
+            }else{
+                // 取消选中，删掉
+                this.aoMixData[_data[1]].splice(this.aoMixData[_data[1]].indexOf(_data[2]),1)
+            }
+        },
+        tdMouseUpHandler:function(_data){
+            console.log(1)
+            let _rowIndex =_data[0] < this.firstTd[0]?_data[0]:this.firstTd[0],
+                _colIndex = _data[1] < this.firstTd[1]?_data[1]:this.firstTd[1],
+                _row = (_data[0] - this.firstTd[0]) > 0?_data[0] - this.firstTd[0]:this.firstTd[0] - _data[0],
+                _col = (_data[1] - this.firstTd[1]) > 0?_data[1] - this.firstTd[1]:this.firstTd[1] - _data[0]
+            this.nowSelectedSize=[_row+1,_col+1]
+            this.nowFirstTd=[_rowIndex,_colIndex]
+            for(let i = 0;i<_row+1;i++){
+                for(let j = 0;j<_col+1;j++){
+                    if(this.nowSelectedTds[i+_rowIndex].indexOf(j+_colIndex) === -1){
+                        this.nowSelectedTds[i+_rowIndex].push(j+_colIndex)
+                    }
+                }
+            }
+        },
+        tdMouseDownHandler:function(_data){
+            this.firstTd = _data            
+            if(this.aoMixData[_data[0]].indexOf(_data[1]) === -1){
+                this.aoMixData[_data[0]].push(_data[1])
+            }
         },
         listOnBlur: function() {
             this.rightList = true
@@ -207,28 +263,46 @@ export default {
         listBlurHandler: function() {
         },
         mixHandler: function() {
-            let singleIndex = null//记录单行时行索引值
-            // 获取非空的行
-            let rowList=this.aoMixData.filter((_value,index)=>{
-                if(_value.length>0){
-                    singleIndex = index
-                    return true
-                }
-            })
-            if(rowList.length === 1 && rowList[0].length>1){
-                // 单行多个格子合并
-                rowList[0].sort().forEach((_num,index)=>{
-                    let _mix = this.oConfigData[singleIndex].col[_num]
-                    console.log(_num,index)
-                    if(index === 0){
+            for(let i=0;i < this.nowSelectedSize[0];i++){
+                for(let j = 0;j<this.nowSelectedSize[1];j++){
+                    let _mix = this.oConfigData[this.nowFirstTd[0]+i][this.nowFirstTd[1]+j]
+                    if(i === 0 && j=== 0){
                         _mix.mix = false
-                        _mix.col = rowList[0].length
+                        _mix.row = this.nowSelectedSize[0]
+                        _mix.col = this.nowSelectedSize[1]
+                        _mix.choosed = true
                     }else{
                         _mix.mix = true//true表示被融合了，隐藏掉
                         _mix.col = 0
+                        _mix.row = 0
+                        _mix.choosed = true
                     }
-                });
+                }
             }
+
+
+            // let singleIndex = null//记录单行时行索引值
+            // // 获取非空的行
+            // let rowList=this.aoMixData.filter((_value,index)=>{
+            //     if(_value.length>0){
+            //         singleIndex = index
+            //         return true
+            //     }
+            // })
+            // if(rowList.length === 1 && rowList[0].length>1){
+            //     // 单行多个格子合并
+            //     rowList[0].sort().forEach((_num,index)=>{
+            //         let _mix = this.oConfigData[singleIndex].col[_num]
+            //         console.log(_num,index)
+            //         if(index === 0){
+            //             _mix.mix = false
+            //             _mix.col = rowList[0].length
+            //         }else{
+            //             _mix.mix = true//true表示被融合了，隐藏掉
+            //             _mix.col = 0
+            //         }
+            //     });
+            // }
 
         },
         reductHandler: function() {
@@ -325,6 +399,13 @@ export default {
                 color: #ffffff;
                 background: #3f91a9;
             }
+        }
+    }
+    .dashed_box{
+        position: fixed;
+        border: 1px dotted #cccccc;
+        &.hide{
+            display: none;
         }
     }
 }

@@ -3,7 +3,7 @@
         <div class="table_box" @click="matrixClickHandler">
             <table>
                 <tr v-for="(tr,index) in oMatrixData || 3" :key="index">
-                    <td v-for="(td,index) in tr.col || 3" :key="index"></td>
+                    <td v-for="(td,index) in tr || 3" :key="index"></td>
                 </tr>
             </table>
         </div>

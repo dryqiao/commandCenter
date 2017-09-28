@@ -1,25 +1,10 @@
 <template>
     <div :class="classes" 
         ref="cell" 
-        @click.stop="clickHandler">
-        <!-- @mousedown.right.prevent="tdRightClickHandler(rowIndex,colIndex)" 
-        @mousemove.stop="slideHandler(rowIndex,colIndex)"> -->
-        <!-- <template v-if="renderType === 'index'">{{naturalIndex + 1}}</template>
-        <template v-if="renderType === 'selection'">
-            <Checkbox :value="checked" @click.native.stop="handleClick" @on-change="toggleSelect" :disabled="disabled"></Checkbox>
-        </template>
-        <template v-if="renderType === 'html'">
-            <span v-html="row[column.key]"></span>
-        </template>
-        <template v-if="renderType === 'normal'">
-            <span>{{row[column.key]}}</span>
-        </template>
-        <template v-if="renderType === 'expand' && !row._disableExpand">
-            <div :class="expandCls" @click="toggleExpand">
-                <Icon type="ios-arrow-right"></Icon>
-            </div>
-        </template> -->
-
+        @click.stop="clickHandler"
+        @mousedown="mouseDownHandler"
+        @mouseup="mouseUpHandler"
+        >
         <div class="tag">
             <span>{{cellIndex}}</span>
         </div>
@@ -32,25 +17,26 @@ export default {
     components: {},
     props: {
         td: Object,
-        size: Array,
+        size: Number,
         rowIndex: Number,
         colIndex: Number
     },
     data() {
         return {
             cellIndex: null,
-            choosed:false
+            choosed:false,
+            
         };
     },
     mounted() {
-        this.cellIndex = this.size[1] * this.rowIndex + this.colIndex + 1
+        this.cellIndex = this.size * this.rowIndex + this.colIndex + 1
     },
     computed: {
         classes() {
             return [
                 'cell',
                 {
-                    [`choosed`]: this.choosed,
+                    [`choosed`]: this.choosed || this.td.choosed,
                 }
             ];
         }
@@ -58,8 +44,14 @@ export default {
     methods: {
         clickHandler:function(){
             this.choosed =!this.choosed
-            this.$emit('tdClick',[this.rowIndex,this.colIndex])
+            this.$emit('tdClick',[this.choosed,this.rowIndex,this.colIndex])
         },
+        mouseDownHandler:function(){
+            this.$emit('tdMouseDown',[this.rowIndex,this.colIndex])
+        },
+        mouseUpHandler:function(){
+            this.$emit('tdMouseUp',[this.rowIndex,this.colIndex])
+        }
     },
     created() {
     }
@@ -87,6 +79,10 @@ export default {
     }
     &.choosed {
         background: #a6ccd7
+    }
+    .dashed_box{
+        position: absolute;
+        border: 1px dotted #cccccc;
     }
 }
 </style>
