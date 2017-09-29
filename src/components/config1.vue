@@ -3,7 +3,7 @@
         <!-- 配置矩阵 -->
         <div class="matrix_wrapper">
             <table @mousedown="mouseDownHandler"
-                    @mousemove.stop="mouseMoveHandler"
+                    @mousemove="mouseMoveHandler"
                     @mouseup="mouseUpHandler">
                 <template v-for="(tr,rowIndex) in oConfigData">
                     <tr :key="rowIndex">
@@ -191,17 +191,16 @@ export default {
             ],
             mixSelectedTds: [],
             aoMixData: [],
-            firstTd:[],
-            nowSelectedTds:[],
-            nowSelectedSize:[],
-            nowFirstTd:[],
+            firstTd:[],//起始点
+            nowSelectedTds:[],//框选中的格子
+            nowSelectedSize:[],//框选的尺寸
+            nowFirstTd:[],//框选的起始点
         }
     },
     props: {
     },
     created() {
         this.oConfigData = JSON.parse(localStorage.getItem('layout'))
-        
     },
     mounted() {
         let _size = this.oConfigData.length
@@ -216,7 +215,7 @@ export default {
             this.styleBox.top = event.clientY+'px'
         },
         mouseMoveHandler:function(){
-            this.box_hide = false            
+            this.box_hide = false
             if(event.which == 1){
                 this.styleBox.width = event.clientX - Number(this.styleBox.left.split('px')[0]) + 'px'
                 this.styleBox.height = event.clientY - Number(this.styleBox.top.split('px')[0]) + 'px'
@@ -228,31 +227,41 @@ export default {
             this.styleBox.height = '0px'
         },
         tdClickHandler:function(_data){
-            if(_data[0]){
-                this.aoMixData[_data[1]].push(_data[2])
-            }else{
-                // 取消选中，删掉
-                this.aoMixData[_data[1]].splice(this.aoMixData[_data[1]].indexOf(_data[2]),1)
-            }
+            // if(_data[0]){
+            //     this.aoMixData[_data[1]].push(_data[2])
+            // }else{
+            //     // 取消选中，删掉
+            //     this.aoMixData[_data[1]].splice(this.aoMixData[_data[1]].indexOf(_data[2]),1)
+            // }
         },
         tdMouseUpHandler:function(_data){
-            console.log(1)
             let _rowIndex =_data[0] < this.firstTd[0]?_data[0]:this.firstTd[0],
                 _colIndex = _data[1] < this.firstTd[1]?_data[1]:this.firstTd[1],
                 _row = (_data[0] - this.firstTd[0]) > 0?_data[0] - this.firstTd[0]:this.firstTd[0] - _data[0],
-                _col = (_data[1] - this.firstTd[1]) > 0?_data[1] - this.firstTd[1]:this.firstTd[1] - _data[0]
+                _col = (_data[1] - this.firstTd[1]) > 0?_data[1] - this.firstTd[1]:this.firstTd[1] - _data[1]
             this.nowSelectedSize=[_row+1,_col+1]
             this.nowFirstTd=[_rowIndex,_colIndex]
+            this.nowSelectedTds.forEach((_a,index)=> {
+                
+                _a.forEach(_b=>{
+                    this.oConfigData[index][_b].choosed = false
+                })
+            })
+            for(var i = 0;i < this.nowSelectedTds.length; i++){
+                this.nowSelectedTds[i] = new Array
+            }
             for(let i = 0;i<_row+1;i++){
                 for(let j = 0;j<_col+1;j++){
-                    if(this.nowSelectedTds[i+_rowIndex].indexOf(j+_colIndex) === -1){
+                    // if(this.nowSelectedTds[i+_rowIndex].indexOf(j+_colIndex) === -1){
                         this.nowSelectedTds[i+_rowIndex].push(j+_colIndex)
-                    }
+                        this.oConfigData[i+_rowIndex][j+_colIndex].choosed = true
+                    // }
                 }
             }
+            console.log(this.nowSelectedTds)
         },
         tdMouseDownHandler:function(_data){
-            this.firstTd = _data            
+            this.firstTd = _data
             if(this.aoMixData[_data[0]].indexOf(_data[1]) === -1){
                 this.aoMixData[_data[0]].push(_data[1])
             }
@@ -275,7 +284,7 @@ export default {
                         _mix.mix = true//true表示被融合了，隐藏掉
                         _mix.col = 0
                         _mix.row = 0
-                        _mix.choosed = true
+                        _mix.choosed = false
                     }
                 }
             }

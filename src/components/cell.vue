@@ -24,27 +24,26 @@ export default {
     data() {
         return {
             cellIndex: null,
-            choosed:false,
-            
         };
     },
     mounted() {
         this.cellIndex = this.size * this.rowIndex + this.colIndex + 1
+    },
+    updated(){
     },
     computed: {
         classes() {
             return [
                 'cell',
                 {
-                    [`choosed`]: this.choosed || this.td.choosed,
+                    [`choosed`]: this.td.choosed,
                 }
             ];
         }
     },
     methods: {
         clickHandler:function(){
-            this.choosed =!this.choosed
-            this.$emit('tdClick',[this.choosed,this.rowIndex,this.colIndex])
+            this.$emit('tdClick',[this.rowIndex,this.colIndex])
         },
         mouseDownHandler:function(){
             this.$emit('tdMouseDown',[this.rowIndex,this.colIndex])
