@@ -20,7 +20,8 @@
                             :size="tr.length"
                             v-on:tdClick="tdClickHandler"
                             v-on:tdMouseDown="tdMouseDownHandler"
-                            v-on:tdMouseUp="tdMouseUpHandler"></Cell>
+                            v-on:tdMouseUp="tdMouseUpHandler"
+                            v-on:tdRightClick="tdRightClickHandler"></Cell>
                         </td>
                     </tr>
                 </template>
@@ -195,6 +196,7 @@ export default {
             nowSelectedTds:[],//框选中的格子
             nowSelectedSize:[],//框选的尺寸
             nowFirstTd:[],//框选的起始点
+            mixedTd:[]
         }
     },
     props: {
@@ -234,31 +236,42 @@ export default {
             //     this.aoMixData[_data[1]].splice(this.aoMixData[_data[1]].indexOf(_data[2]),1)
             // }
         },
+        tdRightClickHandler:function(){
+            // 右键点击事件
+        },
         tdMouseUpHandler:function(_data){
-            let _rowIndex =_data[0] < this.firstTd[0]?_data[0]:this.firstTd[0],
-                _colIndex = _data[1] < this.firstTd[1]?_data[1]:this.firstTd[1],
-                _row = (_data[0] - this.firstTd[0]) > 0?_data[0] - this.firstTd[0]:this.firstTd[0] - _data[0],
-                _col = (_data[1] - this.firstTd[1]) > 0?_data[1] - this.firstTd[1]:this.firstTd[1] - _data[1]
-            this.nowSelectedSize=[_row+1,_col+1]
-            this.nowFirstTd=[_rowIndex,_colIndex]
-            this.nowSelectedTds.forEach((_a,index)=> {
-                
-                _a.forEach(_b=>{
-                    this.oConfigData[index][_b].choosed = false
+            // 若选中的单元格中包含融合块
+            if(this.mixedTd.length == 0){
+                // 获取起点与尺寸
+                let _rowIndex =_data[0] < this.firstTd[0]?_data[0]:this.firstTd[0],
+                    _colIndex = _data[1] < this.firstTd[1]?_data[1]:this.firstTd[1],
+                    _row = (_data[0] > this.firstTd[0])?_data[0] - this.firstTd[0]:this.firstTd[0] - _data[0],
+                    _col = (_data[1] > this.firstTd[1])?_data[1] - this.firstTd[1]:this.firstTd[1] - _data[1]
+                this.nowSelectedSize=[_row+1,_col+1]
+                this.nowFirstTd=[_rowIndex,_colIndex]
+                //取消选中
+                this.nowSelectedTds.forEach((_a,index)=> {
+                    _a.forEach(_b=>{
+                        this.oConfigData[index][_b].choosed = false
+                    })
                 })
-            })
-            for(var i = 0;i < this.nowSelectedTds.length; i++){
-                this.nowSelectedTds[i] = new Array
-            }
-            for(let i = 0;i<_row+1;i++){
-                for(let j = 0;j<_col+1;j++){
-                    // if(this.nowSelectedTds[i+_rowIndex].indexOf(j+_colIndex) === -1){
-                        this.nowSelectedTds[i+_rowIndex].push(j+_colIndex)
-                        this.oConfigData[i+_rowIndex][j+_colIndex].choosed = true
-                    // }
+                //清空选中数组
+                for(var i = 0;i < this.nowSelectedTds.length; i++){
+                    this.nowSelectedTds[i] = new Array
                 }
+                //选中操作
+                for(let i = 0;i<_row+1;i++){
+                    for(let j = 0;j<_col+1;j++){
+                        // if(this.nowSelectedTds[i+_rowIndex].indexOf(j+_colIndex) === -1){
+                            this.nowSelectedTds[i+_rowIndex].push(j+_colIndex)
+                            this.oConfigData[i+_rowIndex][j+_colIndex].choosed = true
+                        // }
+                    }
+                }
+            }else{
+
             }
-            console.log(this.nowSelectedTds)
+            console.log('up-nowSelectedTds:',this.nowSelectedTds)
         },
         tdMouseDownHandler:function(_data){
             this.firstTd = _data
@@ -280,15 +293,20 @@ export default {
                         _mix.row = this.nowSelectedSize[0]
                         _mix.col = this.nowSelectedSize[1]
                         _mix.choosed = true
+                        _mix.hasChild = true
                     }else{
                         _mix.mix = true//true表示被融合了，隐藏掉
                         _mix.col = 0
                         _mix.row = 0
                         _mix.choosed = false
+                        _mix.hasChild = false
                     }
                 }
             }
-
+            // this.mixedTd.push({
+            //     firstTd : this.firstTd,
+            //     size : this.nowSelectedSize
+            // })
 
             // let singleIndex = null//记录单行时行索引值
             // // 获取非空的行
@@ -315,7 +333,17 @@ export default {
 
         },
         reductHandler: function() {
-
+            for(let i=0;i < this.nowSelectedSize[0];i++){
+                for(let j = 0;j<this.nowSelectedSize[1];j++){
+                    let _mix = this.oConfigData[this.nowFirstTd[0]+i][this.nowFirstTd[1]+j]
+                        _mix.mix = false
+                        _mix.col = 0
+                        _mix.row = 0
+                        _mix.choosed = false
+                }
+            }
+            this.nowFirstTd = []
+            this.nowSelectedSize = []
         },
         splitHandler: function() {
 

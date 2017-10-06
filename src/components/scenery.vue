@@ -45,21 +45,24 @@ export default {
                         "content": "",
                         "col": 0,
                         "row": 0,
-                        "choosed":false
+                        "choosed":false,
+                        "hasChild":false,
                     },
                     {
                         "mix": false,
                         "content": "",
                         "col": 0,
                         "row": 0,
-                        "choosed":false
+                        "choosed":false,
+                        "hasChild":false,
                     },
                     {
                         "mix": false,
                         "content": "",
                         "col": 0,
                         "row": 0,
-                        "choosed":false
+                        "choosed":false,
+                        "hasChild":false,
                     }
                 ],
                 [
@@ -68,21 +71,24 @@ export default {
                         "content": "",
                         "col": 0,
                         "row": 0,
-                        "choosed":false
+                        "choosed":false,
+                        "hasChild":false,
                     },
                     {
                         "mix": false,
                         "content": "",
                         "col": 0,
                         "row": 0,
-                        "choosed":false
+                        "choosed":false,
+                        "hasChild":false,
                     },
                     {
                         "mix": false,
                         "content": "",
                         "col": 0,
                         "row": 0,
-                        "choosed":false
+                        "choosed":false,
+                        "hasChild":false,
                     }
                 ],
                 [
@@ -91,21 +97,24 @@ export default {
                         "content": "",
                         "col": 0,
                         "row": 0,
-                        "choosed":false
+                        "choosed":false,
+                        "hasChild":false,
                     },
                     {
                         "mix": false,
                         "content": "",
                         "col": 0,
                         "row": 0,
-                        "choosed":false
+                        "choosed":false,
+                        "hasChild":false,
                     },
                     {
                         "mix": false,
                         "content": "",
                         "col": 0,
                         "row": 0,
-                        "choosed":false
+                        "choosed":false,
+                        "hasChild":false,
                     }
                 ]
             ]],

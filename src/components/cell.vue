@@ -4,6 +4,7 @@
         @click.stop="clickHandler"
         @mousedown="mouseDownHandler"
         @mouseup="mouseUpHandler"
+        @click.right="rightClickHandler"
         >
         <div class="tag">
             <span>{{cellIndex}}</span>
@@ -50,6 +51,9 @@ export default {
         },
         mouseUpHandler:function(){
             this.$emit('tdMouseUp',[this.rowIndex,this.colIndex])
+        },
+        rightClickHandler:function(){
+            this.$emit('tdRightClick',[this.rowIndex,this.colIndex])
         }
     },
     created() {
