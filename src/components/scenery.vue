@@ -47,6 +47,7 @@ export default {
                         "row": 0,
                         "choosed":false,
                         "hasChild":false,
+                        "img" : '',
                     },
                     {
                         "mix": false,
@@ -55,6 +56,7 @@ export default {
                         "row": 0,
                         "choosed":false,
                         "hasChild":false,
+                        "img" : '',
                     },
                     {
                         "mix": false,
@@ -63,6 +65,7 @@ export default {
                         "row": 0,
                         "choosed":false,
                         "hasChild":false,
+                        "img" : '',
                     }
                 ],
                 [
@@ -73,6 +76,7 @@ export default {
                         "row": 0,
                         "choosed":false,
                         "hasChild":false,
+                        "img" : '',
                     },
                     {
                         "mix": false,
@@ -81,6 +85,7 @@ export default {
                         "row": 0,
                         "choosed":false,
                         "hasChild":false,
+                        "img" : '',
                     },
                     {
                         "mix": false,
@@ -89,6 +94,7 @@ export default {
                         "row": 0,
                         "choosed":false,
                         "hasChild":false,
+                        "img" : '',
                     }
                 ],
                 [
@@ -99,6 +105,7 @@ export default {
                         "row": 0,
                         "choosed":false,
                         "hasChild":false,
+                        "img" : '',
                     },
                     {
                         "mix": false,
@@ -107,6 +114,7 @@ export default {
                         "row": 0,
                         "choosed":false,
                         "hasChild":false,
+                        "img" : '',
                     },
                     {
                         "mix": false,
@@ -115,6 +123,7 @@ export default {
                         "row": 0,
                         "choosed":false,
                         "hasChild":false,
+                        "img" : '',
                     }
                 ]
             ]],

@@ -12,7 +12,9 @@
                         :key="colIndex"
                         :rowspan="td.row"
                         :colspan="td.col"
-                        :class="{mix:td.mix}">
+                        :style="{
+                            width:100 / tr.length + '%',
+                            height:100 / oConfigData.length + '%'}">
                             <Cell 
                             :td="td" 
                             :rowIndex="rowIndex" 
@@ -33,12 +35,12 @@
         <!-- 模块列表 -->
         <div class="moudule_wrapper">
             <Menu>
-                <Submenu name="oMouduleData.name" v-for="(oMouduleData,index) in aoModuleData" :key="index">
+                <Submenu name="oMouduleData.name" v-for="(oMouduleData,index) in aoModuleData" :key="index"> 
                     <template slot="title">
                         <Icon type="ios-paper"></Icon>
                         {{oMouduleData.text}}
                     </template>
-                    <MenuItem v-for="(oList,index1) in oMouduleData.lists" :key="index1" :name="oList.name||0"> {{oList.text}}
+                    <MenuItem v-for="(oList,index1) in oMouduleData.lists" :key="index1" :name="oList.name||0" @dblclick.stop.native="mouduleDbClickHandler(oList)"> {{oList.text}}
                     <Input v-if="oList.input" v-model="url"></Input>
                     <Upload v-if="oList.upload" action="//jsonplaceholder.typicode.com/posts/">
                         <Button type="ghost" icon="ios-cloud-upload-outline">上传文件</Button>
@@ -163,10 +165,12 @@ export default {
                     text: '功能',
                     lists: [{
                         name: 'production',
-                        text: '生产进度'
+                        text: '生产进度',
+                        src: require('../../static/img/1.png')
                     }, {
                         name: 'mass',
-                        text: '产量'
+                        text: '产量',
+                        src: require('../../static/img/2.png')
                     }]
                 },
                 {
@@ -208,7 +212,6 @@ export default {
         let _size = this.oConfigData.length
         for(var i = 0;i < _size; i++){
              this.aoMixData[i] = new Array
-             this.nowSelectedTds[i] = new Array
         }
     },
     methods: {
@@ -251,19 +254,15 @@ export default {
                 this.nowFirstTd=[_rowIndex,_colIndex]
                 //取消选中
                 this.nowSelectedTds.forEach((_a,index)=> {
-                    _a.forEach(_b=>{
-                        this.oConfigData[index][_b].choosed = false
-                    })
+                    this.oConfigData[_a[0]][_a[1]].choosed = false
                 })
                 //清空选中数组
-                for(var i = 0;i < this.nowSelectedTds.length; i++){
-                    this.nowSelectedTds[i] = new Array
-                }
+                this.nowSelectedTds = new Array
                 //选中操作
                 for(let i = 0;i<_row+1;i++){
                     for(let j = 0;j<_col+1;j++){
                         // if(this.nowSelectedTds[i+_rowIndex].indexOf(j+_colIndex) === -1){
-                            this.nowSelectedTds[i+_rowIndex].push(j+_colIndex)
+                            this.nowSelectedTds.push([i+_rowIndex,j+_colIndex])
                             this.oConfigData[i+_rowIndex][j+_colIndex].choosed = true
                         // }
                     }
@@ -303,33 +302,6 @@ export default {
                     }
                 }
             }
-            // this.mixedTd.push({
-            //     firstTd : this.firstTd,
-            //     size : this.nowSelectedSize
-            // })
-
-            // let singleIndex = null//记录单行时行索引值
-            // // 获取非空的行
-            // let rowList=this.aoMixData.filter((_value,index)=>{
-            //     if(_value.length>0){
-            //         singleIndex = index
-            //         return true
-            //     }
-            // })
-            // if(rowList.length === 1 && rowList[0].length>1){
-            //     // 单行多个格子合并
-            //     rowList[0].sort().forEach((_num,index)=>{
-            //         let _mix = this.oConfigData[singleIndex].col[_num]
-            //         console.log(_num,index)
-            //         if(index === 0){
-            //             _mix.mix = false
-            //             _mix.col = rowList[0].length
-            //         }else{
-            //             _mix.mix = true//true表示被融合了，隐藏掉
-            //             _mix.col = 0
-            //         }
-            //     });
-            // }
 
         },
         reductHandler: function() {
@@ -344,9 +316,17 @@ export default {
             }
             this.nowFirstTd = []
             this.nowSelectedSize = []
+            this.nowSelectedTds = []
         },
         splitHandler: function() {
 
+        },
+        mouduleDbClickHandler: function(oList){
+            if(this.nowSelectedTds.length>0){
+                let _td = this.nowSelectedTds[0]
+                this.oConfigData[_td[0]][_td[1]].img = oList.src
+                //调用接口，更新表格数据
+            }
         }
     },
     computed: {

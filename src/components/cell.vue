@@ -6,6 +6,7 @@
         @mouseup="mouseUpHandler"
         @click.right="rightClickHandler"
         >
+        <img v-if="td.img.length > 0" :src="td.img" alt="#" :style="imgStyle">
         <div class="tag">
             <span>{{cellIndex}}</span>
         </div>
@@ -25,10 +26,19 @@ export default {
     data() {
         return {
             cellIndex: null,
+            imgStyle: {
+                height: '0px',
+                // width: '0px',
+            },
         };
     },
     mounted() {
+        console.log(this.$refs.cell)
         this.cellIndex = this.size * this.rowIndex + this.colIndex + 1
+        this.$nextTick(()=>{
+            this.imgStyle.height = this.$refs.cell.clientHeight + 1 + 'px'
+            // this.imgStyle.width = this.$refs.cell.clientWidth + 'px'
+        })
     },
     updated(){
     },
@@ -57,6 +67,10 @@ export default {
         }
     },
     created() {
+    },
+    updated() {
+        console.log(this.td.img.length)
+
     }
 };
 </script>
@@ -64,8 +78,14 @@ export default {
 @border : 1px solid #3f91a9;
 .cell {
     position: relative;
+    width: 100%;
     height: 100%;
     background: #ebf5f7;
+    overflow: hidden;
+    vertical-align: middle;
+    img{
+        width: 100%;
+    }
     .tag {
         position: absolute;
         top: 0px;
