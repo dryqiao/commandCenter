@@ -9,6 +9,7 @@
                     <tr :key="rowIndex">
                         <td v-for="(td,colIndex) in tr" 
                         v-if="!td.mix"
+                        ref="td"
                         :key="colIndex"
                         :rowspan="td.row"
                         :colspan="td.col"
@@ -27,7 +28,6 @@
                         </td>
                     </tr>
                 </template>
-
             </table>
         </div>
         <div class="dashed_box" :style="styleBox" :class="{hide:box_hide}"></div>
@@ -40,7 +40,8 @@
                         <Icon type="ios-paper"></Icon>
                         {{oMouduleData.text}}
                     </template>
-                    <MenuItem v-for="(oList,index1) in oMouduleData.lists" :key="index1" :name="oList.name||0" @dblclick.stop.native="mouduleDbClickHandler(oList)"> {{oList.text}}
+                    <MenuItem v-for="(oList,index1) in oMouduleData.lists" :key="index1" :name="oList.name||0"
+                     @dblclick.stop.native="mouduleDbClickHandler(oList)"> {{oList.text}}
                     <Input v-if="oList.input" v-model="url"></Input>
                     <Upload v-if="oList.upload" action="//jsonplaceholder.typicode.com/posts/">
                         <Button type="ghost" icon="ios-cloud-upload-outline">上传文件</Button>
@@ -51,17 +52,15 @@
             </Menu>
         </div>
         <!-- 右键列表 -->
-        <div v-show="rightList" class="event_list" @mouseover="listOnBlur" @mouseout="listBlurHandler">
+        <div v-show="rightList" 
+        class="event_list" 
+        :style="rightStyle"
+        @mouseover="listOnBlur" 
+        @mouseout="listBlurHandler">
             <ul>
-                <li @click.stop="mixHandler">合并
-                    <Icon type="chevron-right"></Icon>
-                </li>
-                <li @click.stop="reductHandler">还原
-                    <Icon type="chevron-right"></Icon>
-                </li>
-                <li @click.stop="splitHandler">拆分
-                    <Icon type="chevron-right"></Icon>
-                </li>
+                <li @click.stop="mixHandler">合并<Icon type="chevron-right"></Icon></li>
+                <li @click.stop="reductHandler">还原<Icon type="chevron-right"></Icon></li>
+                <li @click.stop="splitHandler">拆分<Icon type="chevron-right"></Icon></li>
             </ul>
         </div>
         <!-- 按钮 -->
@@ -88,8 +87,15 @@ export default {
                 width:'',
                 height:''
             },
+            rightStyle: {
+                left: '',
+                top: '',
+            },
             url:'',
-            rightList: true,
+            cellStyle:  {
+                height: '0px'
+            },
+            rightList: false,
             oConfigData: [],
             aoColumns: [
                 {
@@ -209,29 +215,39 @@ export default {
         this.oConfigData = JSON.parse(localStorage.getItem('layout'))
     },
     mounted() {
-        let _size = this.oConfigData.length
-        for(var i = 0;i < _size; i++){
+        for(var i = 0;i < this.oConfigData.length; i++){
              this.aoMixData[i] = new Array
+        }
+        // console.log(this.$refs.td)
+        this.cellIndex = this.size * this.rowIndex + this.colIndex + 1
+
+        this.cellStyle = {
+            height: this.$refs.td[0].clientHeight +　'px',
         }
     },
     methods: {
         mouseDownHandler:function(){
-            this.styleBox.left = event.clientX+'px'
-            this.styleBox.top = event.clientY+'px'
+            
         },
         mouseMoveHandler:function(){
-            this.box_hide = false
+            
+            
+            // console.log('move',event)
             if(event.which == 1){
+                this.box_hide = false
+                this.styleBox.left = event.clientX+'px'
+                this.styleBox.top = event.clientY+'px'
                 this.styleBox.width = event.clientX - Number(this.styleBox.left.split('px')[0]) + 'px'
                 this.styleBox.height = event.clientY - Number(this.styleBox.top.split('px')[0]) + 'px'
             }
         },
         mouseUpHandler:function(){
-            this.box_hide = false
+            this.box_hide = true
             this.styleBox.width = '0px'
             this.styleBox.height = '0px'
         },
         tdClickHandler:function(_data){
+            console.log('tdClick')
             // if(_data[0]){
             //     this.aoMixData[_data[1]].push(_data[2])
             // }else{
@@ -239,12 +255,18 @@ export default {
             //     this.aoMixData[_data[1]].splice(this.aoMixData[_data[1]].indexOf(_data[2]),1)
             // }
         },
-        tdRightClickHandler:function(){
+        tdRightClickHandler:function(_data){
             // 右键点击事件
+            console.log('right')
+            if(this.nowSelectedTds.length > 0){
+                this.rightList = true
+                let _td = this.$refs.td[_data - 1]
+                this.rightStyle.left = event.offsetX + _td.offsetLeft + 'px'
+                this.rightStyle.top = event.offsetY + _td.offsetTop + 'px'
+            }
         },
         tdMouseUpHandler:function(_data){
             // 若选中的单元格中包含融合块
-            if(this.mixedTd.length == 0){
                 // 获取起点与尺寸
                 let _rowIndex =_data[0] < this.firstTd[0]?_data[0]:this.firstTd[0],
                     _colIndex = _data[1] < this.firstTd[1]?_data[1]:this.firstTd[1],
@@ -267,9 +289,7 @@ export default {
                         // }
                     }
                 }
-            }else{
-
-            }
+            
             console.log('up-nowSelectedTds:',this.nowSelectedTds)
         },
         tdMouseDownHandler:function(_data){
@@ -282,6 +302,9 @@ export default {
             this.rightList = true
         },
         listBlurHandler: function() {
+            // setTimeout(()=>{
+            this.rightList = false
+            // },500)
         },
         mixHandler: function() {
             for(let i=0;i < this.nowSelectedSize[0];i++){
@@ -403,8 +426,7 @@ export default {
     }
     .event_list {
         position: absolute;
-        top: 100px;
-        left: 100px;
+        background: #ffffff;
         border: 1px solid #cccccc;
         li {
             width: 100px;

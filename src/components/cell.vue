@@ -4,7 +4,7 @@
         @click.stop="clickHandler"
         @mousedown="mouseDownHandler"
         @mouseup="mouseUpHandler"
-        @click.right="rightClickHandler"
+        @contextmenu.prevent="rightClickHandler"
         >
         <img v-if="td.img.length > 0" :src="td.img" alt="#" :style="imgStyle">
         <div class="tag">
@@ -27,20 +27,15 @@ export default {
         return {
             cellIndex: null,
             imgStyle: {
-                height: '0px',
-                // width: '0px',
+                height: '',
             },
         };
     },
     mounted() {
-        console.log(this.$refs.cell)
         this.cellIndex = this.size * this.rowIndex + this.colIndex + 1
-        this.$nextTick(()=>{
-            this.imgStyle.height = this.$refs.cell.clientHeight + 1 + 'px'
-            // this.imgStyle.width = this.$refs.cell.clientWidth + 'px'
-        })
     },
     updated(){
+        // console.log(this.td)
     },
     computed: {
         classes() {
@@ -50,6 +45,16 @@ export default {
                     [`choosed`]: this.td.choosed,
                 }
             ];
+        }
+    },
+    watch: {
+        td:{
+            handler:function(val,oldVal){
+                // console.log(val)
+                // 监听td.img，修改图片高度
+                this.imgStyle.height = this.$refs.cell.clientHeight + 'px'
+            },
+            deep:true
         }
     },
     methods: {
@@ -63,13 +68,13 @@ export default {
             this.$emit('tdMouseUp',[this.rowIndex,this.colIndex])
         },
         rightClickHandler:function(){
-            this.$emit('tdRightClick',[this.rowIndex,this.colIndex])
+            console.log('right td')
+            this.$emit('tdRightClick',this.cellIndex)
         }
     },
     created() {
     },
     updated() {
-        console.log(this.td.img.length)
 
     }
 };
@@ -83,6 +88,7 @@ export default {
     background: #ebf5f7;
     overflow: hidden;
     vertical-align: middle;
+    font-size: 0px;
     img{
         width: 100%;
     }
