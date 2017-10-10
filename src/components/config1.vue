@@ -14,14 +14,13 @@
                         :rowspan="td.row"
                         :colspan="td.col"
                         :style="{
-                            width:100 / tr.length + '%',
-                            height:100 / oConfigData.length + '%'}">
+                            width:'10px',
+                            height:'180px'}">
                             <Cell 
                             :td="td" 
                             :rowIndex="rowIndex" 
                             :colIndex="colIndex"
                             :size="tr.length"
-                            v-on:tdClick="tdClickHandler"
                             v-on:tdMouseDown="tdMouseDownHandler"
                             v-on:tdMouseUp="tdMouseUpHandler"
                             v-on:tdRightClick="tdRightClickHandler"></Cell>
@@ -126,6 +125,24 @@ export default {
                                 },
                                 on: {
                                     click: () => {
+                                        let _index = this.nowSelectedTds[0]
+                                        if(params.index != 0){
+                                            let _list = this.oConfigData[_index[0]][_index[1]].list
+                                            // [_list[_index - 1],_index[_index]] = [_list[_index],_index[_index - 1]]
+
+                                            console.log(_list)
+                                            
+                                            let tmp = this.oConfigData[_index[0]][_index[1]].list[params.index - 1]
+                                            this.oConfigData[_index[0]][_index[1]].list[params.index - 1] = this.oConfigData[_index[0]][_index[1]].list[params.index]
+                                            this.oConfigData[_index[0]][_index[1]].list[params.index] = tmp
+                                            this.aoTableData = []
+                                            console.log('table',this.aoTableData)
+
+
+                                            this.aoTableData = this.oConfigData[_index[0]][_index[1]].list
+                                            console.log('table',this.aoTableData)
+
+                                        }
                                     }
                                 }
                             }),
@@ -153,6 +170,8 @@ export default {
                                 },
                                 on: {
                                     click: () => {
+                                        let _index = this.nowSelectedTds[0]
+                                        this.oConfigData[_index[0]][_index[1]].list.splice(params.index,1)
                                     }
                                 }
                             }, '删除')
@@ -160,11 +179,7 @@ export default {
                     }
                 }
             ],
-            aoTableData: [{
-                module: "OEE",
-                mutual: "轮播",
-                cycle: "60"
-            }],
+            aoTableData: [],
             aoModuleData: [
                 {
                     name: 'feature',
@@ -225,41 +240,46 @@ export default {
             height: this.$refs.td[0].clientHeight +　'px',
         }
     },
+    updated() {
+        console.log('update',this.aoTableData)
+    },
     methods: {
         mouseDownHandler:function(){
-            
+            //记录选择框初始位置
+            this.styleBox.left = event.clientX+'px'
+            this.styleBox.top = event.clientY+'px'
         },
         mouseMoveHandler:function(){
-            
-            
             // console.log('move',event)
+            //鼠标左键点击框选事件
             if(event.which == 1){
+                //设置选择框可见和长宽
                 this.box_hide = false
-                this.styleBox.left = event.clientX+'px'
-                this.styleBox.top = event.clientY+'px'
                 this.styleBox.width = event.clientX - Number(this.styleBox.left.split('px')[0]) + 'px'
                 this.styleBox.height = event.clientY - Number(this.styleBox.top.split('px')[0]) + 'px'
             }
         },
         mouseUpHandler:function(){
+            //隐藏选择框
             this.box_hide = true
             this.styleBox.width = '0px'
             this.styleBox.height = '0px'
         },
-        tdClickHandler:function(_data){
-            console.log('tdClick')
-            // if(_data[0]){
-            //     this.aoMixData[_data[1]].push(_data[2])
-            // }else{
-            //     // 取消选中，删掉
-            //     this.aoMixData[_data[1]].splice(this.aoMixData[_data[1]].indexOf(_data[2]),1)
-            // }
-        },
+        // tdClickHandler:function(_data){
+        //     console.log('tdClick')
+        //     // if(_data[0]){
+        //     //     this.aoMixData[_data[1]].push(_data[2])
+        //     // }else{
+        //     //     // 取消选中，删掉
+        //     //     this.aoMixData[_data[1]].splice(this.aoMixData[_data[1]].indexOf(_data[2]),1)
+        //     // }
+        // },
         tdRightClickHandler:function(_data){
             // 右键点击事件
             console.log('right')
             if(this.nowSelectedTds.length > 0){
                 this.rightList = true
+                //若有合并单元格，会有问题
                 let _td = this.$refs.td[_data - 1]
                 this.rightStyle.left = event.offsetX + _td.offsetLeft + 'px'
                 this.rightStyle.top = event.offsetY + _td.offsetTop + 'px'
@@ -289,7 +309,9 @@ export default {
                         // }
                     }
                 }
-            
+
+                //修改表格数据
+                this.aoTableData = this.oConfigData[_rowIndex][_colIndex].list
             console.log('up-nowSelectedTds:',this.nowSelectedTds)
         },
         tdMouseDownHandler:function(_data){
@@ -316,6 +338,8 @@ export default {
                         _mix.col = this.nowSelectedSize[1]
                         _mix.choosed = true
                         _mix.hasChild = true
+                        _mix.size = this.nowSelectedSize
+                        console.log(_mix.size)
                     }else{
                         _mix.mix = true//true表示被融合了，隐藏掉
                         _mix.col = 0
@@ -349,6 +373,12 @@ export default {
                 let _td = this.nowSelectedTds[0]
                 this.oConfigData[_td[0]][_td[1]].img = oList.src
                 //调用接口，更新表格数据
+                this.oConfigData[_td[0]][_td[1]].list.push({
+                    module: oList.text,
+                    mutual: "轮播",
+                    cycle: "60"
+                })
+                // console.log(this.oConfigData[_td[0]][_td[1]].list)
             }
         }
     },

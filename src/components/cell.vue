@@ -1,7 +1,6 @@
 <template>
     <div :class="classes" 
         ref="cell" 
-        @click.stop="clickHandler"
         @mousedown="mouseDownHandler"
         @mouseup="mouseUpHandler"
         @contextmenu.prevent="rightClickHandler"
@@ -48,24 +47,34 @@ export default {
         }
     },
     watch: {
-        td:{
+        'td.img':{
             handler:function(val,oldVal){
                 // console.log(val)
                 // 监听td.img，修改图片高度
-                this.imgStyle.height = this.$refs.cell.clientHeight + 'px'
+                // this.imgStyle.height = this.$refs.cell.clientHeight + 'px'
+                
+                // this.imgStyle.width = this.$refs.cell.clientWidth + 'px'
             },
             deep:true
         }
     },
     methods: {
-        clickHandler:function(){
-            this.$emit('tdClick',[this.rowIndex,this.colIndex])
-        },
+        // clickHandler:function(){
+        //     console.log('click td')
+        //     this.$emit('tdClick',[this.rowIndex,this.colIndex])
+        // },
         mouseDownHandler:function(){
-            this.$emit('tdMouseDown',[this.rowIndex,this.colIndex])
+            if(event.which === 1){
+                console.log('mousedown td')
+                this.$emit('tdMouseDown',[this.rowIndex,this.colIndex])
+            }
+            
         },
         mouseUpHandler:function(){
-            this.$emit('tdMouseUp',[this.rowIndex,this.colIndex])
+            if(event.which === 1){
+                console.log('mouseup td')
+                this.$emit('tdMouseUp',[this.rowIndex,this.colIndex])
+            }
         },
         rightClickHandler:function(){
             console.log('right td')
@@ -91,7 +100,8 @@ export default {
     font-size: 0px;
     img{
         width: 100%;
-    }
+        height: 100%;
+    }   
     .tag {
         position: absolute;
         top: 0px;

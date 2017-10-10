@@ -48,6 +48,8 @@ export default {
                         "choosed":false,
                         "hasChild":false,
                         "img" : '',
+                        "size" :[1,1],
+                        "list":[]
                     },
                     {
                         "mix": false,
@@ -57,6 +59,8 @@ export default {
                         "choosed":false,
                         "hasChild":false,
                         "img" : '',
+                        "size" :[1,1],
+                        "list":[]
                     },
                     {
                         "mix": false,
@@ -66,6 +70,8 @@ export default {
                         "choosed":false,
                         "hasChild":false,
                         "img" : '',
+                        "size" :[1,1],
+                        "list":[]
                     }
                 ],
                 [
@@ -77,6 +83,8 @@ export default {
                         "choosed":false,
                         "hasChild":false,
                         "img" : '',
+                        "size" :[1,1],
+                        "list":[]
                     },
                     {
                         "mix": false,
@@ -86,6 +94,8 @@ export default {
                         "choosed":false,
                         "hasChild":false,
                         "img" : '',
+                        "size" :[1,1],
+                        "list":[]
                     },
                     {
                         "mix": false,
@@ -95,6 +105,8 @@ export default {
                         "choosed":false,
                         "hasChild":false,
                         "img" : '',
+                        "size" :[1,1],
+                        "list":[]
                     }
                 ],
                 [
@@ -106,6 +118,8 @@ export default {
                         "choosed":false,
                         "hasChild":false,
                         "img" : '',
+                        "size" :[1,1],
+                        "list":[]
                     },
                     {
                         "mix": false,
@@ -115,6 +129,8 @@ export default {
                         "choosed":false,
                         "hasChild":false,
                         "img" : '',
+                        "size" :[1,1],
+                        "list":[]
                     },
                     {
                         "mix": false,
@@ -124,6 +140,8 @@ export default {
                         "choosed":false,
                         "hasChild":false,
                         "img" : '',
+                        "size" :[1,1],
+                        "list":[]
                     }
                 ]
             ]],
