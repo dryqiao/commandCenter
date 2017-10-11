@@ -2,13 +2,13 @@
     <div class="matrix-box">
         <div class="table_box" @click="matrixClickHandler">
             <table>
-                <tr v-for="(tr,index) in oMatrixData || 3" :key="index">
-                    <td v-for="(td,index) in tr || 3" :key="index"></td>
+                <tr v-for="(tr,index) in oMatrixData.rowNum" :key="index">
+                    <td v-for="(td,index) in oMatrixData.columnNum" :key="index"></td>
                 </tr>
             </table>
         </div>
         <div class="text">
-            <Input type="text" v-model="oMatrixData.name"></Input>
+            <Input type="text" v-model="oMatrixData.sceneName"></Input>
         </div>
     </div>
 </template>
@@ -19,17 +19,35 @@ export default {
         }
     },
     props: {
-        oMatrixData: Array
+        oMatrixData: Object
     },
     created() {
     },
     mounted(){
-        console.log(this.oMatrixData)
     },
     methods: {
         matrixClickHandler() {
             console.log(this.oMatrixData)
-            localStorage.setItem('layout', JSON.stringify(this.oMatrixData))
+            let aoMatrix = []
+            //创建初始二维数组
+            for(let i = 0;i<this.oMatrixData.rowNum;i++){
+                aoMatrix[i] = new Array
+                for(let j = 0;j<this.oMatrixData.columnNum;j++){
+                    aoMatrix[i].push({
+                        "mix": false,
+                        "content": "",
+                        "col": 0,
+                        "row": 0,
+                        "choosed":false,
+                        "hasChild":false,
+                        "img" : '',
+                        "size" :[1,1],
+                        "list":[]
+                    })
+                }
+            }
+            localStorage.setItem('layout', JSON.stringify(aoMatrix))
+            localStorage.setItem('sceneId', this.oMatrixData.sceneId)
             this.$router.push('/layout/config')
         }
     }

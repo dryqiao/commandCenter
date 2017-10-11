@@ -64,8 +64,10 @@
         </div>
         <!-- 按钮 -->
         <div class="btn_wrapper">
+            <label for="">预案名称:</label>
+            <Input v-model="schemeName" placeholder="请输入..." style="width: 200px"></Input>
             <Button size="large">上墙</Button>
-            <Button size="large">保存</Button>
+            <Button size="large" @click="saveHandler">保存</Button>
         </div>
         <!-- 表格 -->
         <div class="table_wrapper">
@@ -75,10 +77,11 @@
 </template>
 <script>
     import Cell from './cell'
-
+    import api from '../api/api'
 export default {
     data() {
         return {
+            schemeName: '',
             box_hide: true,
             styleBox:{
                 left:'',
@@ -125,23 +128,16 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        let _index = this.nowSelectedTds[0]
-                                        if(params.index != 0){
-                                            let _list = this.oConfigData[_index[0]][_index[1]].list
-                                            // [_list[_index - 1],_index[_index]] = [_list[_index],_index[_index - 1]]
-
-                                            console.log(_list)
-                                            
-                                            let tmp = this.oConfigData[_index[0]][_index[1]].list[params.index - 1]
-                                            this.oConfigData[_index[0]][_index[1]].list[params.index - 1] = this.oConfigData[_index[0]][_index[1]].list[params.index]
-                                            this.oConfigData[_index[0]][_index[1]].list[params.index] = tmp
-                                            this.aoTableData = []
+                                        let index = params.index//当前表格行点击的数据索引
+                                        if(index > 0 && index <= this.aoTableData.length){
+                                            let 
+                                                _index = this.nowSelectedTds[0],//当前选中框的行列索引
+                                                _list = this.oConfigData[_index[0]][_index[1]].list,//当前框的list
+                                                tmp = _list[index]//存储当前数据用于交换
+                                            //调换顺序
+                                            this.$set(_list,index,_list[index - 1])
+                                            this.$set(_list,index - 1,tmp)
                                             console.log('table',this.aoTableData)
-
-
-                                            this.aoTableData = this.oConfigData[_index[0]][_index[1]].list
-                                            console.log('table',this.aoTableData)
-
                                         }
                                     }
                                 }
@@ -153,6 +149,17 @@ export default {
                                 },
                                 on: {
                                     click: () => {
+                                        let index = params.index//当前表格行点击的数据索引
+                                        if(index >= 0 && index < this.aoTableData.length - 1){
+                                            let 
+                                                _index = this.nowSelectedTds[0],//当前选中框的行列索引
+                                                _list = this.oConfigData[_index[0]][_index[1]].list,//当前框的list
+                                                tmp = _list[index]//存储当前数据用于交换
+                                            //调换顺序
+                                            this.$set(_list,index,_list[index + 1])
+                                            this.$set(_list,index + 1,tmp)
+                                            console.log('table',this.aoTableData)
+                                        }
                                     }
                                 }
                             })
@@ -228,6 +235,14 @@ export default {
     },
     created() {
         this.oConfigData = JSON.parse(localStorage.getItem('layout'))
+        this.sceneId = localStorage.getItem('sceneId')
+        console.log(this.oConfigData)
+
+        // api.getModule()
+        // .then(res => {
+        //     this.aoModuleData = res.r
+        //     console.log(res.r)
+        // })
     },
     mounted() {
         for(var i = 0;i < this.oConfigData.length; i++){
@@ -380,6 +395,15 @@ export default {
                 })
                 // console.log(this.oConfigData[_td[0]][_td[1]].list)
             }
+        },
+        saveHandler: function(){
+            api.insertScheme({
+                schemeName: this.schemeName,
+                sceneId: this.sceneId,
+                schemeJson: this.oConfigData
+            }).then(res => {
+                console.log(res)
+            })
         }
     },
     computed: {

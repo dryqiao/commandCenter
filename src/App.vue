@@ -18,8 +18,7 @@
           <Menu theme="dark" width="auto">
             <Menu-item v-for="item in sideitems" class="menu-item" :name="item.id" :key="item.id">
               <li @click="go(item.link)">
-                <!--<router-link :to="item.link"></router-link>-->
-                <!-- <img :src="item.src"> -->
+                <img src="./assets/img/icon.png" :class="item.class">
                 <span class="text">{{item.name}}</span>
               </li>
             </Menu-item>
@@ -49,16 +48,19 @@ export default {
       sideitems: [{
         id: 1,
         name: '布景管理',
-        // src:require("./components/a.png"),
-        link: '/scenery'
+        // src:require("./assets/img/icon.png"),
+        link: '/scenery',
+        class:'scenery'
       }, {
         id: 2,
         name: '布局管理',
-        link: '/layout/choose'
+        link: '/layout/choose',
+        class:'choose'
       }, {
         id: 3,
         name: '预案管理',
-        link: '/plan'
+        link: '/plan',
+        class:'plan'
       }]
     }
   },
@@ -108,10 +110,19 @@ export default {
         vertical-align: middle;
         background: #333333;
         img {
-          width: 24px;
-          height: 24px;
+          width: 60px;
+          height: 60px;
           background-repeat: no-repeat;
           vertical-align: top;
+          &.scenery{
+            background-position: 0 0;
+          }
+          &.choose{
+            background-position: 0 -40px;
+          }
+          &.plan{
+            background-position: 0 -80px;
+          }
         }
         .text {
           text-align: center;
