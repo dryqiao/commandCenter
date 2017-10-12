@@ -1,11 +1,7 @@
 <template>
     <div class="scenery">
         <div v-for="(item,index) in matrixData" :key="index" class="box" @mouseover="closebtn=index" @mouseleave="closebtn=null">
-            <Button :class="{hide:closebtn !== index}" type="primary" 
-                shape="circle" 
-                icon="close" 
-                class="btn_close" 
-                @click.stop="handlerDelete(index)">
+            <Button :class="{hide:closebtn !== index}" shape="circle" icon="close" class="btn_close" type="error" @click.stop="handlerDelete(index)">
             </Button>
             <matrixBox :oMatrixData="item"></matrixBox>
         </div>
@@ -48,6 +44,7 @@ export default {
                 sceneName: '',
                 rowNum: '',
                 columnNum: '',
+                sceneId: null
             },
             ruleValidate: {
                 sceneName: [
@@ -68,11 +65,11 @@ export default {
             .then(res => {
                 this.matrixData = res.r
                 console.log(this.matrixData)
-            },err => {
-                console.log('err',err)
+            }, err => {
+                console.log('err', err)
             })
             .catch(error => {
-                console.log('error',error)
+                console.log('error', error)
             })
     },
     methods: {
@@ -85,22 +82,23 @@ export default {
                     // this.matrixData.push(Object.assign({}, this.oFormData))
                     //清空弹窗
                     this.oFormData = {
-                        name: '',
-                        row: '',
-                        col: '',
+                        sceneName: '',
+                        rowNum: '',
+                        columnNum: '',
+                        sceneId: null
                     }
                 })
                 .catch(error => {
-                    console.log('error:',error)
+                    console.log('error:', error)
                 })
         },
         handlerDelete(index) {
             console.log(this.matrixData[index].sceneId)
             //调用删除接口
             api.deleteScene({
-                    sceneId:this.matrixData[index].sceneId
-                })
-                .then(res=>{
+                sceneId: this.matrixData[index].sceneId
+            })
+                .then(res => {
                     this.matrixData.splice(index, 1)
                 })
         }
@@ -138,12 +136,21 @@ export default {
         margin-left: 20px;
         .text {
             text-align: center;
+            margin-top: 10px;
         }
         .add_btn {
             width: 180px;
             height: 180px;
+            background-color: #cccccc;
+            border-color: #cccccc;
             span {
                 font-size: 64px;
+            }
+        }
+        &:hover {
+            .add_btn {
+                background-color: #3f8faa;
+                border-color: #3f8faa;
             }
         }
     }

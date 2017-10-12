@@ -5,21 +5,21 @@
     <!--布局-->
     <div class="layout">
       <Row type="flex">
-        <Col :span="spanLeft" class="sidebar" :class="{'layout-hide-text': spanLeft < 3}">
+        <Col :span="spanLeft" class="sidebar" :class="{'hide': spanLeft < 3}">
         <!--左边菜单栏-->
         <div>
           <!--缩放按钮-->
-          <div class="toggleBox">
+          <!-- <div class="toggleBox">
             <Button type="text" class="toggle" @click="toggleClick">
               <Icon type="navicon" size="32"></Icon>
             </Button>
-          </div>
+          </div> -->
           <!--侧边栏-->
           <Menu theme="dark" width="auto">
-            <Menu-item v-for="item in sideitems" class="menu-item" :name="item.id" :key="item.id">
+            <Menu-item v-for="item in sideitems" :name="item.id" :key="item.id">
               <li @click="go(item.link)">
-                <img src="./assets/img/icon.png" :class="item.class">
-                <span class="text">{{item.name}}</span>
+                <img :src="item.src">
+                <span>{{item.name}}</span>
               </li>
             </Menu-item>
           </Menu>
@@ -48,17 +48,19 @@ export default {
       sideitems: [{
         id: 1,
         name: '布景管理',
-        // src:require("./assets/img/icon.png"),
+        src:require("./assets/img/scenery.png"),
         link: '/scenery',
         class:'scenery'
       }, {
         id: 2,
         name: '布局管理',
+        src:require("./assets/img/choose.png"),
         link: '/layout/choose',
         class:'choose'
       }, {
         id: 3,
         name: '预案管理',
+        src:require("./assets/img/plan.png"),
         link: '/plan',
         class:'plan'
       }]
@@ -96,37 +98,28 @@ export default {
     }
     .sidebar {
       background: #333333;
-      &.layout-hide-text {
-        li {
-          span {
-            display: none;
-          }
-        }
+      .ivu-menu-item{
+        padding-top: 40px;
       }
-      .toggleBox {
-        text-align: center;
-      }
-      li {
+      // .toggleBox {
+      //   text-align: center;
+      // }
+      .ivu-menu-item {
         vertical-align: middle;
         background: #333333;
+        color: #ffffff;
+        text-align: center;
+        span {
+          display: block;
+        }
         img {
-          width: 60px;
-          height: 60px;
+          width: 80px;
+          height: 80px;
           background-repeat: no-repeat;
           vertical-align: top;
-          &.scenery{
-            background-position: 0 0;
-          }
-          &.choose{
-            background-position: 0 -40px;
-          }
-          &.plan{
-            background-position: 0 -80px;
-          }
         }
-        .text {
-          text-align: center;
-          vertical-align: middle;
+        &.ivu-menu-item-selected{
+          background: #3f8faa;
         }
       }
     }

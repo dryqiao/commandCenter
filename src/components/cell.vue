@@ -18,7 +18,7 @@ export default {
     components: {},
     props: {
         td: Object,
-        size: Number,
+        size: Number,//列尺寸
         rowIndex: Number,
         colIndex: Number
     },
@@ -78,7 +78,7 @@ export default {
         },
         rightClickHandler:function(){
             console.log('right td')
-            this.$emit('tdRightClick',this.cellIndex)
+            this.$emit('tdRightClick',[this.rowIndex,this.colIndex,this.cellIndex,this.size])
         }
     },
     created() {

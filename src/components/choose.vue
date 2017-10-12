@@ -30,15 +30,7 @@ export default {
     created() {
     },
     methods: {
-        handlerSubmit() {
-            //深拷贝，否则会双向绑定
-            this.matrixData.push(Object.assign({}, this.formData))
-            this.formData = {
-                name: '',
-                row: '',
-                col: '',
-            }
-        },
+       
         handlerDelete(index) {
             this.matrixData.splice(index, 1)
             

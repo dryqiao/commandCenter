@@ -10,6 +10,11 @@ export default {
         return fetch('/commandCenter-config/insertScene',params)
     },
 
+    // 更新布景
+    updateScene(params){
+        return fetch('/commandCenter-config/updateScene',params)
+    },
+
     deleteScene(params){
         return fetch('/commandCenter-config/deleteScene',params)
     },

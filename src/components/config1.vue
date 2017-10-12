@@ -15,7 +15,7 @@
                         :colspan="td.col"
                         :style="{
                             width:'10px',
-                            height:'180px'}">
+                            height:'100px'}">
                             <Cell 
                             :td="td" 
                             :rowIndex="rowIndex" 
@@ -248,15 +248,13 @@ export default {
         for(var i = 0;i < this.oConfigData.length; i++){
              this.aoMixData[i] = new Array
         }
-        // console.log(this.$refs.td)
-        this.cellIndex = this.size * this.rowIndex + this.colIndex + 1
 
         this.cellStyle = {
             height: this.$refs.td[0].clientHeight +　'px',
         }
     },
     updated() {
-        console.log('update',this.aoTableData)
+        // console.log('update',this.aoTableData)
     },
     methods: {
         mouseDownHandler:function(){
@@ -266,12 +264,14 @@ export default {
         },
         mouseMoveHandler:function(){
             // console.log('move',event)
-            //鼠标左键点击框选事件
+            //鼠标左键点击拖动框选事件
             if(event.which == 1){
                 //设置选择框可见和长宽
                 this.box_hide = false
                 this.styleBox.width = event.clientX - Number(this.styleBox.left.split('px')[0]) + 'px'
                 this.styleBox.height = event.clientY - Number(this.styleBox.top.split('px')[0]) + 'px'
+            }else{
+                this.box_hide = true
             }
         },
         mouseUpHandler:function(){
@@ -280,27 +280,38 @@ export default {
             this.styleBox.width = '0px'
             this.styleBox.height = '0px'
         },
-        // tdClickHandler:function(_data){
-        //     console.log('tdClick')
-        //     // if(_data[0]){
-        //     //     this.aoMixData[_data[1]].push(_data[2])
-        //     // }else{
-        //     //     // 取消选中，删掉
-        //     //     this.aoMixData[_data[1]].splice(this.aoMixData[_data[1]].indexOf(_data[2]),1)
-        //     // }
-        // },
+        // 右键点击事件
         tdRightClickHandler:function(_data){
-            // 右键点击事件
-            console.log('right')
-            if(this.nowSelectedTds.length > 0){
+            let [row,col,index,size] = _data,
+                nowTd = this.nowSelectedTds[0]
+            // console.log('right')
+            //当前选中格子数大于0，且右键点击格子在
+            if(this.nowSelectedTds.length > 0 && row === nowTd[0]&& col === nowTd[1]){
+                let count = 0;
+                // 计算当前索引之前的格子融合个数
+                for(let i = 0;i <= row;i++){
+                    for(let j = 0;j<size;j++){
+                        if(i * size+ j < index - 1 && this.oConfigData[i][j].mix === true){
+                            count++
+                        }
+                    }
+                }
+
                 this.rightList = true
                 //若有合并单元格，会有问题
-                let _td = this.$refs.td[_data - 1]
+                let _td = this.$refs.td[_data[2] - count - 1]
                 this.rightStyle.left = event.offsetX + _td.offsetLeft + 'px'
                 this.rightStyle.top = event.offsetY + _td.offsetTop + 'px'
             }
         },
         tdMouseUpHandler:function(_data){
+            // 当前只有一个格子选中，且点击在它上面
+            if(this.firstTd.join(',') === _data.join(',') && this.nowSelectedTds.length === 1 && this.nowSelectedTds[0].join(',') === _data.join(',')){
+                console.log(this.nowSelectedTds)
+                this.oConfigData[_data[0]][_data[1]].choosed = false
+                 this.aoTableData = []
+                 this.nowSelectedTds = new Array
+            }else{
             // 若选中的单元格中包含融合块
                 // 获取起点与尺寸
                 let _rowIndex =_data[0] < this.firstTd[0]?_data[0]:this.firstTd[0],
@@ -327,13 +338,15 @@ export default {
 
                 //修改表格数据
                 this.aoTableData = this.oConfigData[_rowIndex][_colIndex].list
+            }
+
             console.log('up-nowSelectedTds:',this.nowSelectedTds)
         },
         tdMouseDownHandler:function(_data){
             this.firstTd = _data
-            if(this.aoMixData[_data[0]].indexOf(_data[1]) === -1){
-                this.aoMixData[_data[0]].push(_data[1])
-            }
+            // if(this.aoMixData[_data[0]].indexOf(_data[1]) === -1){
+            //     this.aoMixData[_data[0]].push(_data[1])
+            // }
         },
         listOnBlur: function() {
             this.rightList = true

@@ -8,20 +8,24 @@
             </table>
         </div>
         <div class="text">
-            <Input type="text" v-model="oMatrixData.sceneName"></Input>
+            <Input type="text" v-model="oMatrixData.sceneName" @on-blur="blurHandler"></Input>
         </div>
     </div>
 </template>
 <script>
+    import api from '../api/api'
 export default {
     data() {
         return {
+            oldName : ''
         }
     },
     props: {
         oMatrixData: Object
     },
     created() {
+        console.log(this.oMatrixData)
+        this.oldName = this.oMatrixData.sceneName
     },
     mounted(){
     },
@@ -49,6 +53,19 @@ export default {
             localStorage.setItem('layout', JSON.stringify(aoMatrix))
             localStorage.setItem('sceneId', this.oMatrixData.sceneId)
             this.$router.push('/layout/config')
+        },
+        blurHandler:function() {
+           
+            if(this.oMatrixData.sceneName != this.oldName){
+                 console.log(this.oMatrixData)
+                //修改名称
+                api.updateScene(this.oMatrixData)
+                    .then(res => {
+                            //记录当前名称
+                            this.oldName = this.oMatrixData.sceneName
+                    })
+                    .catch(err => console.log('matrixbox',err))
+            }
         }
     }
 }
