@@ -8,7 +8,7 @@
                 <template v-for="(tr,rowIndex) in oConfigData">
                     <tr :key="rowIndex">
                         <td v-for="(td,colIndex) in tr" 
-                        v-if="!td.mix"
+                        v-show="!td.mix"
                         ref="td"
                         :key="colIndex"
                         :rowspan="td.row"
@@ -283,23 +283,21 @@ export default {
         // 右键点击事件
         tdRightClickHandler:function(_data){
             let [row,col,index,size] = _data,
-                nowTd = this.nowSelectedTds[0]
-            // console.log('right')
-            //当前选中格子数大于0，且右键点击格子在
-            if(this.nowSelectedTds.length > 0 && row === nowTd[0]&& col === nowTd[1]){
-                let count = 0;
-                // 计算当前索引之前的格子融合个数
-                for(let i = 0;i <= row;i++){
-                    for(let j = 0;j<size;j++){
-                        if(i * size+ j < index - 1 && this.oConfigData[i][j].mix === true){
-                            count++
-                        }
+                nowTd = this.nowSelectedTds[0],
+                tag = false//右键点击在选中的多个格子内，则标记为true
+            if(this.nowSelectedTds.length >= 1){
+                this.nowSelectedTds.forEach(td => {
+                    if(td[0] === row && td[1] ===col){
+                        tag = true
                     }
-                }
-
+                })
+            }
+            // console.log('right')
+            if(tag){
                 this.rightList = true
-                //若有合并单元格，会有问题
-                let _td = this.$refs.td[_data[2] - count - 1]
+                // 获取当前格子DOM
+                let _td = this.$refs.td[index - 1]
+                // 设置列表位置
                 this.rightStyle.left = event.offsetX + _td.offsetLeft + 'px'
                 this.rightStyle.top = event.offsetY + _td.offsetTop + 'px'
             }
@@ -310,14 +308,18 @@ export default {
                 console.log(this.nowSelectedTds)
                 this.oConfigData[_data[0]][_data[1]].choosed = false
                  this.aoTableData = []
-                 this.nowSelectedTds = new Array
+                 this.nowSelectedTds = []
             }else{
             // 若选中的单元格中包含融合块
                 // 获取起点与尺寸
                 let _rowIndex =_data[0] < this.firstTd[0]?_data[0]:this.firstTd[0],
                     _colIndex = _data[1] < this.firstTd[1]?_data[1]:this.firstTd[1],
                     _row = (_data[0] > this.firstTd[0])?_data[0] - this.firstTd[0]:this.firstTd[0] - _data[0],
-                    _col = (_data[1] > this.firstTd[1])?_data[1] - this.firstTd[1]:this.firstTd[1] - _data[1]
+                    _col = (_data[1] > this.firstTd[1])?_data[1] - this.firstTd[1]:this.firstTd[1] - _data[1],
+                    colList = [],
+                    rowList = []
+                rowList.push(_rowIndex)
+                colList.push(_colIndex)
                 this.nowSelectedSize=[_row+1,_col+1]
                 this.nowFirstTd=[_rowIndex,_colIndex]
                 //取消选中
@@ -325,17 +327,28 @@ export default {
                     this.oConfigData[_a[0]][_a[1]].choosed = false
                 })
                 //清空选中数组
-                this.nowSelectedTds = new Array
+                this.nowSelectedTds = []
                 //选中操作
                 for(let i = 0;i<_row+1;i++){
                     for(let j = 0;j<_col+1;j++){
-                        // if(this.nowSelectedTds[i+_rowIndex].indexOf(j+_colIndex) === -1){
-                            this.nowSelectedTds.push([i+_rowIndex,j+_colIndex])
-                            this.oConfigData[i+_rowIndex][j+_colIndex].choosed = true
+                        let _td = this.oConfigData[i+_rowIndex][j+_colIndex]
+                        // if(_td.hasChild === true){
+                        //     rowList.push(i + _rowIndex)
+                        //     rowList.push(i + _rowIndex + _td.row - 1)
+                        //     colList.push(j + _colIndex)
+                        //     colList.push(j + _colIndex +_td.col - 1)
                         // }
+                            this.nowSelectedTds.push([i+_rowIndex,j+_colIndex])
+                            _td.choosed = true
                     }
                 }
 
+//                 this.nowFirstTd = [rowList.sort()[0],colList.sort()[0]]
+
+// this.nowSelectedSize = [rowList.sort()[rowList.length - 1] - rowList.sort()[0],colList.sort()[colList.length - 1] - colList.sort()[0]]
+
+
+                console.log('up',rowList,colList)
                 //修改表格数据
                 this.aoTableData = this.oConfigData[_rowIndex][_colIndex].list
             }
@@ -357,41 +370,57 @@ export default {
             // },500)
         },
         mixHandler: function() {
-            for(let i=0;i < this.nowSelectedSize[0];i++){
-                for(let j = 0;j<this.nowSelectedSize[1];j++){
-                    let _mix = this.oConfigData[this.nowFirstTd[0]+i][this.nowFirstTd[1]+j]
-                    if(i === 0 && j=== 0){
-                        _mix.mix = false
-                        _mix.row = this.nowSelectedSize[0]
-                        _mix.col = this.nowSelectedSize[1]
-                        _mix.choosed = true
-                        _mix.hasChild = true
-                        _mix.size = this.nowSelectedSize
-                        console.log(_mix.size)
-                    }else{
-                        _mix.mix = true//true表示被融合了，隐藏掉
-                        _mix.col = 0
-                        _mix.row = 0
-                        _mix.choosed = false
-                        _mix.hasChild = false
+            if(this.nowSelectedTds.length > 1){
+                for(let i=0;i < this.nowSelectedSize[0];i++){
+                    for(let j = 0;j<this.nowSelectedSize[1];j++){
+                        let _mix = this.oConfigData[this.nowFirstTd[0]+i][this.nowFirstTd[1]+j]
+                        if(i === 0 && j=== 0){
+                            _mix.mix = false
+                            _mix.row = this.nowSelectedSize[0]
+                            _mix.col = this.nowSelectedSize[1]
+                            _mix.choosed = true
+                            _mix.hasChild = true
+                            // console.log(_mix.size)
+                        }else{
+                            _mix.mix = true//true表示被融合了，隐藏掉
+                            _mix.col = 0
+                            _mix.row = 0
+                            _mix.choosed = false
+                            _mix.hasChild = false
+                        }
                     }
                 }
+                this.nowSelectedTds = []
+                this.nowSelectedTds.push(this.nowFirstTd)
+                console.log(this.nowSelectedTds)
             }
-
         },
         reductHandler: function() {
-            for(let i=0;i < this.nowSelectedSize[0];i++){
-                for(let j = 0;j<this.nowSelectedSize[1];j++){
-                    let _mix = this.oConfigData[this.nowFirstTd[0]+i][this.nowFirstTd[1]+j]
-                        _mix.mix = false
-                        _mix.col = 0
-                        _mix.row = 0
-                        _mix.choosed = false
+            console.log('reduct')
+            // 当前选中格子数为1
+            if(this.nowSelectedTds.length === 1){
+                let _td = this.nowSelectedTds[0],
+                    gz = this.oConfigData[_td[0]][_td[1]],
+                    _row = gz.row,
+                    _col = gz.col
+                // 有融合子元素时才进行还原
+                if(gz.hasChild){
+                    for(let i=0;i < _row;i++){
+                        for(let j = 0;j < _col;j++){
+                            let _mix = this.oConfigData[_td[0]+i][_td[1]+j]
+                            console.log(_mix)
+                                _mix.mix = false
+                                _mix.col = 0
+                                _mix.row = 0
+                                _mix.choosed = false
+                                _mix.hasChild = false
+                        }
+                    }
+                    this.nowFirstTd = []
+                    this.nowSelectedSize = []
+                    this.nowSelectedTds = []
                 }
             }
-            this.nowFirstTd = []
-            this.nowSelectedSize = []
-            this.nowSelectedTds = []
         },
         splitHandler: function() {
 

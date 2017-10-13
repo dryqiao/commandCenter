@@ -45,7 +45,6 @@ export default {
                         "choosed":false,
                         "hasChild":false,
                         "img" : '',
-                        "size" :[1,1],
                         "list":[]
                     })
                 }
