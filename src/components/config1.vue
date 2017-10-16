@@ -442,9 +442,12 @@ export default {
             api.insertScheme({
                 schemeName: this.schemeName,
                 sceneId: this.sceneId,
-                schemeJson: this.oConfigData
+                schemeJson: JSON.stringify(this.oConfigData)
             }).then(res => {
                 console.log(res)
+            })
+            .catch(error => {
+                console.log('insert failed')
             })
         }
     },

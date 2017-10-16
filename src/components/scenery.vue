@@ -53,7 +53,7 @@ export default {
                 rowNum: [
                     { required: true, type: "number", message: '行数不能为空', trigger: 'blur' },
                 ],
-                columnNu: [
+                columnNum: [
                     { required: true, type: "number", message: '列数不能为空', trigger: 'blur' }
                 ]
             }

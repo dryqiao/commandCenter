@@ -2,7 +2,7 @@ import axios from 'axios'
 import qs from 'qs'
 
 axios.defaults.timeout = 5000
-axios.defaults.baseURL = 'http://172.17.10.98:808/api'
+axios.defaults.baseURL = 'http://192.168.31.147:808/api'
 
 axios.interceptors.request.use(config=>{
     if(config.method === 'post'){
