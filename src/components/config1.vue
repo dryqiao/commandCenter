@@ -228,14 +228,27 @@ export default {
             nowSelectedTds:[],//框选中的格子
             nowSelectedSize:[],//框选的尺寸
             nowFirstTd:[],//框选的起始点
-            mixedTd:[]
+            mixedTd:[],
+            sceneId: null,
+            schemeId: null,
+            tag: 0 //1表示更新，0表示新建
         }
     },
     props: {
     },
     created() {
-        this.oConfigData = JSON.parse(localStorage.getItem('layout'))
-        this.sceneId = localStorage.getItem('sceneId')
+        let storageData = JSON.parse(localStorage.getItem('layout'))
+        //预案点击进入
+        if(storageData.schemeJson){
+            this.tag = 1
+            this.oConfigData = JSON.parse(storageData.schemeJson)
+            this.schemeName = storageData.schemeName
+            this.schemeId = storageData.schemeId
+        }else {
+            //布局点击进入
+            this.oConfigData = storageData
+            this.sceneId = localStorage.getItem('sceneId')            
+        }
         console.log(this.oConfigData)
 
         // api.getModule()
@@ -439,16 +452,29 @@ export default {
             }
         },
         saveHandler: function(){
-            api.insertScheme({
-                schemeName: this.schemeName,
-                sceneId: this.sceneId,
-                schemeJson: JSON.stringify(this.oConfigData)
-            }).then(res => {
-                console.log(res)
-            })
-            .catch(error => {
-                console.log('insert failed')
-            })
+            if(this.tag === 0){
+                api.insertScheme({
+                    schemeName: this.schemeName,
+                    sceneId: this.sceneId,
+                    schemeJson: JSON.stringify(this.oConfigData)
+                }).then(res => {
+                    console.log(res)
+                })
+                .catch(error => {
+                    console.log('insert failed')
+                })
+            }else {
+                api.updateScheme({
+                    schemeName: this.schemeName,
+                    schemeId: this.schemeId,
+                    schemeJson: JSON.stringify(this.oConfigData)
+                }).then(res => {
+                    console.log(res)
+                })
+                .catch(error => {
+                    console.log('insert failed')
+                })
+            }
         }
     },
     computed: {

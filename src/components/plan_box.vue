@@ -10,15 +10,16 @@
                         :rowspan="td.row"
                         :colspan="td.col"
                         :style="{
-                            width:'10px',
-                            height:'10px'}">
+                            height: '55px',
+                            width: '55px'
+                        }">
                             <Cell :td="td"></Cell>
                         </td>
                 </tr>
             </table>
         </div>
         <div class="text">
-            <Input type="text" v-model="oMatrixData.sceneName" @on-blur="blurHandler"></Input>
+            <Input type="text" v-model="oMatrixData.schemeName" @on-blur="blurHandler"></Input>
         </div>
     </div>
 </template>
@@ -38,7 +39,7 @@ export default {
         Cell
     },
     created() {
-        this.oldName = this.oMatrixData.sceneName
+        this.oldName = this.oMatrixData.schemeName
 
         console.log(this.oMatrixData)
     },
@@ -54,16 +55,22 @@ export default {
         },
         blurHandler:function() {
            
-            if(this.oMatrixData.sceneName != this.oldName){
+            if(this.oMatrixData.schemeName != this.oldName){
                  console.log(this.oMatrixData)
                 //修改名称
-                api.updateScene(this.oMatrixData)
+                api.updateScheme(this.oMatrixData)
                     .then(res => {
                             //记录当前名称
-                            this.oldName = this.oMatrixData.sceneName
+                            this.oldName = this.oMatrixData.schemeName
                     })
                     .catch(err => console.log('matrixbox',err))
             }
+        },
+        setSize: function() {
+            this.$refs.td.forEach(_td => {
+               _td.style.height = _td.clientHeight + 'px'
+                _td.style.width = _td.clientWidth + 'px'
+            })
         }
     }
 }

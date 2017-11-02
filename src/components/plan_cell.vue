@@ -1,22 +1,17 @@
 <template>
-    <div :class="classes">
-        <img v-if="td.img.length > 0" :src="td.img" alt="#" :style="imgStyle">
+    <div :class="classes" ref="plan_cell">
+        <img v-if="td.img.length > 0" :src="td.img" alt="#">
     </div>
 </template>
 <script>
-
 export default {
-    name: 'TableCell',
+    name: 'planCell',
     components: {},
     props: {
         td: Object
     },
     data() {
         return {
-            cellIndex: null,
-            imgStyle: {
-                height: '',
-            },
         };
     },
     mounted() {
@@ -24,42 +19,20 @@ export default {
     updated(){
     },
     computed: {
+        imgStyle() {
+            // return {
+            //     height: this.$refs.plan_cell.height,
+            //     width: this.$refs.plan_cell.width,
+            // }
+        },
         classes() {
             return [
                 'plan_cell',
                 {
                     [`choosed`]: this.td.choosed,
                 }
-            ];
+            ]
         }
-    },
-    methods: {
-        // clickHandler:function(){
-        //     console.log('click td')
-        //     this.$emit('tdClick',[this.rowIndex,this.colIndex])
-        // },
-        // mouseDownHandler:function(){
-        //     if(event.which === 1){
-        //         console.log('mousedown td')
-        //         this.$emit('tdMouseDown',[this.rowIndex,this.colIndex])
-        //     }
-            
-        // },
-        // mouseUpHandler:function(){
-        //     if(event.which === 1){
-        //         console.log('mouseup td')
-        //         this.$emit('tdMouseUp',[this.rowIndex,this.colIndex])
-        //     }
-        // },
-        // rightClickHandler:function(){
-        //     console.log('right td')
-        //     this.$emit('tdRightClick',[this.rowIndex,this.colIndex,this.cellIndex,this.size])
-        // }
-    },
-    created() {
-    },
-    updated() {
-
     }
 };
 </script>

@@ -1,7 +1,10 @@
 <template>
     <div class="scenery">
-        <div v-for="(item,index) in matrixData" :key="index" class="box" @mouseover="closebtn=index" @mouseleave="closebtn=null">
-            <Button :class="{hide:closebtn !== index}" shape="circle" icon="close" class="btn_close" type="error" @click.stop="handlerDelete(index)">
+        <div v-for="(item,index) in matrixData" :key="index" class="box" 
+        @mouseover="closebtn=index" 
+        @mouseleave="closebtn=null">
+            <Button :class="{hide:closebtn !== index}" shape="circle" icon="close" class="btn_close" type="error" 
+            @click.stop="handlerDelete(index)">
             </Button>
             <planBox :oMatrixData="item"></planBox>
         </div>
@@ -10,39 +13,19 @@
 <script>
 import planBox from './plan_box'
 import api from '../api/api'
-import axios from 'axios'
 export default {
     data() {
         return {
             matrixData: [],
             closebtn: false,
-            isShow: false,
-            modal1: false,
-            oFormData: {
-                sceneName: '',
-                rowNum: '',
-                columnNum: '',
-                sceneId: null
-            },
-            ruleValidate: {
-                sceneName: [
-                    { required: true, message: '姓名不能为空', trigger: 'blur' }
-                ],
-                rowNum: [
-                    { required: true, type: "number", message: '行数不能为空', trigger: 'blur' },
-                ],
-                columnNu: [
-                    { required: true, type: "number", message: '列数不能为空', trigger: 'blur' }
-                ]
-            }
         }
     },
     created() {
-        // 获取布景
+        // 获取预案
         api.getScheme()
             .then(res => {
                 this.matrixData = res.r
-                console.log(this.matrixData)
+                console.log('plan',this.matrixData)
             }, err => {
                 console.log('err', err)
             })
@@ -52,10 +35,10 @@ export default {
     },
     methods: {
         handlerDelete(index) {
-            console.log(this.matrixData[index].sceneId)
+            console.log(this.matrixData[index].schemeId)
             //调用删除接口
             api.deleteScheme({
-                sceneId: this.matrixData[index].sceneId
+                schemeId: this.matrixData[index].schemeId
                 })
                 .then(res => {
                     this.matrixData.splice(index, 1)
