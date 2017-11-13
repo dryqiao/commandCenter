@@ -5,19 +5,31 @@
                 "mix": false,
                 "content": "",
                 "col": 0,
-                "row": 0
+                "row": 0,
+                "choosed": false,
+                "hasChild": false,
+                "img": "",
+                "list": []
             },
             {
                 "mix": false,
                 "content": "",
                 "col": 0,
-                "row": 0
+                "row": 0,
+                "choosed": false,
+                "hasChild": false,
+                "img": "",
+                "list": []
             },
             {
                 "mix": false,
                 "content": "",
                 "col": 0,
-                "row": 0
+                "row": 0,
+                "choosed": false,
+                "hasChild": false,
+                "img": "",
+                "list": []
             }
         ],
         [
@@ -25,19 +37,31 @@
                 "mix": false,
                 "content": "",
                 "col": 0,
-                "row": 0
+                "row": 0,
+                "choosed": false,
+                "hasChild": false,
+                "img": "",
+                "list": []
             },
             {
                 "mix": false,
                 "content": "",
                 "col": 0,
-                "row": 0
+                "row": 0,
+                "choosed": false,
+                "hasChild": false,
+                "img": "",
+                "list": []
             },
             {
                 "mix": false,
                 "content": "",
                 "col": 0,
-                "row": 0
+                "row": 0,
+                "choosed": false,
+                "hasChild": false,
+                "img": "",
+                "list": []
             }
         ],
         [
@@ -45,19 +69,31 @@
                 "mix": false,
                 "content": "",
                 "col": 0,
-                "row": 0
+                "row": 0,
+                "choosed": false,
+                "hasChild": false,
+                "img": "",
+                "list": []
             },
             {
                 "mix": false,
                 "content": "",
                 "col": 0,
-                "row": 0
+                "row": 0,
+                "choosed": false,
+                "hasChild": false,
+                "img": "",
+                "list": []
             },
             {
                 "mix": false,
                 "content": "",
                 "col": 0,
-                "row": 0
+                "row": 0,
+                "choosed": false,
+                "hasChild": false,
+                "img": "",
+                "list": []
             }
         ]
     ]

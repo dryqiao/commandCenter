@@ -1,6 +1,6 @@
 <template>
     <div class="matrix-box">
-        <div class="table_box" @click="matrixClickHandler">
+        <div class="table_box" @click.stop="matrixClickHandler">
             <table>
                 <tr v-for="(tr,index) in oMatrixData.rowNum" :key="index">
                     <td v-for="(td,index) in oMatrixData.columnNum" :key="index"></td>
@@ -49,9 +49,13 @@ export default {
                     })
                 }
             }
-            localStorage.setItem('layout', JSON.stringify(aoMatrix))
-            localStorage.setItem('sceneId', this.oMatrixData.sceneId)
-            this.$router.push('/layout/config')
+            localStorage.setItem('layout', JSON.stringify({
+                    "schemeJson" : JSON.stringify(aoMatrix),
+                    "sceneId" :  this.oMatrixData.sceneId,
+                    "schemeName":"",
+                    "schemeId":null
+                }))
+            this.$router.push('/layout/choose')
         },
         blurHandler:function() {
            

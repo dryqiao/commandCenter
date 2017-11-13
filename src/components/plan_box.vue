@@ -9,17 +9,14 @@
                         :key="colIndex"
                         :rowspan="td.row"
                         :colspan="td.col"
-                        :style="{
-                            height: '55px',
-                            width: '55px'
-                        }">
-                            <Cell :td="td"></Cell>
+                        :style="tdSize">
+                            <Cell v-if="!choose" :td="td"></Cell>
                         </td>
                 </tr>
             </table>
         </div>
         <div class="text">
-            <Input type="text" v-model="oMatrixData.schemeName" @on-blur="blurHandler"></Input>
+            <Input v-if="!choose" type="text" v-model="oMatrixData.schemeName" @on-blur="blurHandler"></Input>
         </div>
     </div>
 </template>
@@ -33,21 +30,29 @@ export default {
         }
     },
     props: {
-        oMatrixData: Object
+        oMatrixData: Object,
+        choose: Boolean
     },
     components : {
         Cell
     },
     created() {
-        this.oldName = this.oMatrixData.schemeName
+        if(this.oMatrixData.schemeName){
+            this.oldName = this.oMatrixData.schemeName
+        }
 
-        console.log(this.oMatrixData)
+        console.log(this.choose)
     },
-    mounted(){
+    computed: {
+        tdSize :function() {
+            return {
+                height: 164 / 3 +'px',
+                width: 164 / 3 +'px'
+            }
+        }
     },
     methods: {
         matrixClickHandler() {
-            console.log(this.oMatrixData)
             
             localStorage.setItem('layout', JSON.stringify(this.oMatrixData))
             localStorage.setItem('sceneId', this.oMatrixData.sceneId)

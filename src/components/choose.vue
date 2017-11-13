@@ -1,72 +1,56 @@
 <template>
     <div class="scenery">
-        <div v-for="(item,index) in matrixData" :key="index" class="box"
-            @mouseover="closebtn=index"
-            @mouseleave="closebtn=null">
-            <matrixBox :oMatrixData="item" @click.stop="matrixClickHandler(index)"></matrixBox>
+        <div class="diy">
+            <p>自定义布局</p>
+            <div class="box">
+                <planBox :oMatrixData="matrixData" :choose="true"></planBox>
+            </div>
+        </div>
+        
+        <div>
+            <p>参考布局</p>
+            <div class="box">
+                <planBox :oMatrixData="matrixData" :choose="true"></planBox>
+            </div>
         </div>
     </div>
 </template>
 <script>
-import matrixBox from './matrix_box'
+import planBox from "./plan_box";
 export default {
-    data() {
-        return {
-            matrixData: [{
-                name: 'aaa',
-                row: 3,
-                col: 3,
-            }],
-            closebtn: false,
-            isShow: false,
-            modal1: false,
-            formData: {
-                name: '',
-                row: '',
-                col: '',
-            }
-        }
-    },
-    created() {
-    },
-    methods: {
-       
-        handlerDelete(index) {
-            this.matrixData.splice(index, 1)
-            
-        },
-        matrixClickHandler(index) {
-            localStorage.setItem('layout',this.matrixData[index])
-            this.$router.push('/layout/config')
-        }
-    },
-    components: {
-        matrixBox
-    }
-}
+  data() {
+    return {
+      matrixData: {}
+    };
+  },
+  created() {
+    //此处不解析JSON字符串，组件里解析
+    this.matrixData = JSON.parse(localStorage.getItem("layout"));
+    // this.matrixData.sceneId = localStorage.getItem('sceneId')
+    // this.matrixData.schemeName = `${}`
+  },
+  methods: {},
+  components: {
+    planBox
+  }
+};
 </script>
 
 <style lang="less" scoped>
 .scenery {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    padding: 20px;
-    background: #ffffff;
-    .box {
-        position: relative;
-        height: 200px;
-        .btn_close {
-            position: absolute;
-            right: -5px;
-            top: -5px;
-            z-index: 999;
-            &.hide{
-                display: none
-            }
-        }
-    }
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  padding: 20px;
+  background: #ffffff;
+  p {
+    font-size: 24px;
+  }
+  .box {
+    position: relative;
+    height: 200px;
+  }
 }
 </style>

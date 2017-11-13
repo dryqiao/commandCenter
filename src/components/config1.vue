@@ -194,11 +194,31 @@ export default {
                     lists: [{
                         name: 'production',
                         text: '生产进度',
-                        src: require('../../static/img/1.png')
+                        src: require('../assets/img/production.png')
                     }, {
                         name: 'mass',
-                        text: '产量',
-                        src: require('../../static/img/2.png')
+                        text: '生产产量',
+                        src: require('../assets/img/mass.png')
+                    }, {
+                        name: 'oee',
+                        text: '全局设备效率',
+                        src: require('../assets/img/oee.png')
+                    }, {
+                        name: 'order',
+                        text: '异常事件',
+                        src: require('../assets/img/order.png')
+                    }, {
+                        name: 'state',
+                        text: '设备状态分布',
+                        src: require('../assets/img/state.png')
+                    }, {
+                        name: 'reason',
+                        text: '不合格品原因分析',
+                        src: require('../assets/img/reason.png')
+                    }, {
+                        name: 'stock',
+                        text: '库存',
+                        src: require('../assets/img/stock.png')
                     }]
                 },
                 {
@@ -218,7 +238,6 @@ export default {
                     name: 'selected',
                     text: '已选功能',
                     lists: [{
-
                     }]
                 }
             ],
@@ -238,16 +257,15 @@ export default {
     },
     created() {
         let storageData = JSON.parse(localStorage.getItem('layout'))
+        this.oConfigData = JSON.parse(storageData.schemeJson)
         //预案点击进入
-        if(storageData.schemeJson){
+        if(storageData.schemeId){
             this.tag = 1
-            this.oConfigData = JSON.parse(storageData.schemeJson)
             this.schemeName = storageData.schemeName
             this.schemeId = storageData.schemeId
         }else {
             //布局点击进入
-            this.oConfigData = storageData
-            this.sceneId = localStorage.getItem('sceneId')            
+            this.sceneId = localStorage.getItem('sceneId')
         }
         console.log(this.oConfigData)
 
@@ -261,7 +279,6 @@ export default {
         for(var i = 0;i < this.oConfigData.length; i++){
              this.aoMixData[i] = new Array
         }
-
         this.cellStyle = {
             height: this.$refs.td[0].clientHeight +　'px',
         }

@@ -42,7 +42,7 @@ export default {
     position: relative;
     width: 100%;
     height: 100%;
-    background: #ebf5f7;
+    // background: #ebf5f7;
     overflow: hidden;
     vertical-align: middle;
     font-size: 0px;
