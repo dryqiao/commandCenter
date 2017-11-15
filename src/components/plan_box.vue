@@ -31,7 +31,7 @@ export default {
     },
     props: {
         oMatrixData: Object,
-        choose: Boolean
+        choose: Boolean//为true表示是从布局管理进来的
     },
     components : {
         Cell
@@ -40,8 +40,6 @@ export default {
         if(this.oMatrixData.schemeName){
             this.oldName = this.oMatrixData.schemeName
         }
-
-        console.log(this.choose)
     },
     computed: {
         tdSize :function() {
@@ -53,13 +51,19 @@ export default {
     },
     methods: {
         matrixClickHandler() {
-            
-            localStorage.setItem('layout', JSON.stringify(this.oMatrixData))
-            localStorage.setItem('sceneId', this.oMatrixData.sceneId)
-            this.$router.push('/layout/config')
+            if(this.choose){
+                localStorage.setItem('layout', JSON.stringify(this.oMatrixData))
+                localStorage.setItem('sceneId', this.oMatrixData.sceneId)
+                this.$router.push('/layout/config')
+            }else {
+                this.$router.push({
+                    path:'/layout/config',
+                    query:{
+                        schemeId : this.oMatrixData.schemeId
+                }})
+            }
         },
         blurHandler:function() {
-           
             if(this.oMatrixData.schemeName != this.oldName){
                  console.log(this.oMatrixData)
                 //修改名称

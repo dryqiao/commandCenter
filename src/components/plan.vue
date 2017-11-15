@@ -40,7 +40,7 @@ export default {
             api.deleteScheme({
                 schemeId: this.matrixData[index].schemeId
                 })
-                .then(res => {
+                .then( _ => {
                     this.matrixData.splice(index, 1)
                 })
         }

@@ -2,8 +2,7 @@ import axios from 'axios'
 import qs from 'qs'
 
 axios.defaults.timeout = 5000
-axios.defaults.baseURL = 'http://192.168.31.147:808/api'
-
+axios.defaults.baseURL = 'http://localhost:808/api'
 axios.interceptors.request.use(config=>{
     if(config.method === 'post'){
         config.data = qs.stringify(config.data)
@@ -21,15 +20,12 @@ axios.interceptors.response.use(res=>{
     }
     return res
 },error=>{
-    console.log(error)
     console.log('网络异常')
     return Promise.reject(error)
 })
 
-
+// post请求方法
 export function fetch(url,params) {
-    // console.log('fetch')
-    
     return new Promise((resolve,reject)=>{
         axios.post(url,params)
             .then(res =>{

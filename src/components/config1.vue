@@ -5,7 +5,7 @@
             <table @mousedown="mouseDownHandler"
                     @mousemove="mouseMoveHandler"
                     @mouseup="mouseUpHandler">
-                <template v-for="(tr,rowIndex) in oConfigData">
+                <template v-if="oConfigData.length > 0" v-for="(tr,rowIndex) in oConfigData">
                     <tr :key="rowIndex">
                         <td v-for="(td,colIndex) in tr" 
                         v-show="!td.mix"
@@ -47,7 +47,6 @@
                     </Upload>
                     </MenuItem>
                 </Submenu>
-
             </Menu>
         </div>
         <!-- 右键列表 -->
@@ -94,9 +93,6 @@ export default {
                 top: '',
             },
             url:'',
-            cellStyle:  {
-                height: '0px'
-            },
             rightList: false,
             oConfigData: [],
             aoColumns: [
@@ -253,38 +249,42 @@ export default {
             tag: 0 //1表示更新，0表示新建
         }
     },
-    props: {
+    beforeRouteLeave(to, from, next) {
+        this.$Modal.confirm({
+            title: '警告',
+            content: '<p>确认离开？</p>',
+            onOk: () => {
+                next()
+            },
+            onCancel: () => {
+                next(false)
+            }
+        });
     },
     created() {
-        let storageData = JSON.parse(localStorage.getItem('layout'))
-        this.oConfigData = JSON.parse(storageData.schemeJson)
-        //预案点击进入
-        if(storageData.schemeId){
-            this.tag = 1
-            this.schemeName = storageData.schemeName
-            this.schemeId = storageData.schemeId
-        }else {
+        if(this.$route.query.schemeId >= 0){
+            // 预案点击进入
+            api.getScheme({
+                schemeId : this.$route.query.schemeId
+            }).then( res => {
+                res = res.r[0]
+                this.tag = 1
+                this.oConfigData = JSON.parse(res.schemeJson)
+                this.schemeName = res.schemeName
+                this.schemeId = res.schemeId
+                this.sceneId = res.sceneId
+            })
+        }else{
             //布局点击进入
             this.sceneId = localStorage.getItem('sceneId')
+            //获取空二维数组
+            let storageData = JSON.parse(localStorage.getItem('layout'))
+            this.oConfigData = JSON.parse(storageData.schemeJson)
         }
-        console.log(this.oConfigData)
-
-        // api.getModule()
-        // .then(res => {
-        //     this.aoModuleData = res.r
-        //     console.log(res.r)
-        // })
     },
     mounted() {
-        for(var i = 0;i < this.oConfigData.length; i++){
-             this.aoMixData[i] = new Array
-        }
-        this.cellStyle = {
-            height: this.$refs.td[0].clientHeight +　'px',
-        }
     },
     updated() {
-        // console.log('update',this.aoTableData)
     },
     methods: {
         mouseDownHandler:function(){
@@ -476,6 +476,7 @@ export default {
                     schemeJson: JSON.stringify(this.oConfigData)
                 }).then(res => {
                     console.log(res)
+                    // this.$router.push('/plan')
                 })
                 .catch(error => {
                     console.log('insert failed')
@@ -487,6 +488,7 @@ export default {
                     schemeJson: JSON.stringify(this.oConfigData)
                 }).then(res => {
                     console.log(res)
+                    // this.$router.push('/plan')
                 })
                 .catch(error => {
                     console.log('insert failed')
