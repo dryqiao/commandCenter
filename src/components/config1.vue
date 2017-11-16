@@ -58,7 +58,7 @@
             <ul>
                 <li @click.stop="mixHandler">合并<Icon type="chevron-right"></Icon></li>
                 <li @click.stop="reductHandler">还原<Icon type="chevron-right"></Icon></li>
-                <li @click.stop="splitHandler">拆分<Icon type="chevron-right"></Icon></li>
+                <!-- <li @click.stop="splitHandler">拆分<Icon type="chevron-right"></Icon></li> -->
             </ul>
         </div>
         <!-- 按钮 -->
@@ -126,14 +126,12 @@ export default {
                                     click: () => {
                                         let index = params.index//当前表格行点击的数据索引
                                         if(index > 0 && index <= this.aoTableData.length){
-                                            let 
-                                                _index = this.nowSelectedTds[0],//当前选中框的行列索引
+                                            let  _index = this.nowSelectedTds[0],//当前选中框的行列索引
                                                 _list = this.oConfigData[_index[0]][_index[1]].list,//当前框的list
                                                 tmp = _list[index]//存储当前数据用于交换
                                             //调换顺序
                                             this.$set(_list,index,_list[index - 1])
                                             this.$set(_list,index - 1,tmp)
-                                            console.log('table',this.aoTableData)
                                         }
                                     }
                                 }
@@ -154,7 +152,6 @@ export default {
                                             //调换顺序
                                             this.$set(_list,index,_list[index + 1])
                                             this.$set(_list,index + 1,tmp)
-                                            console.log('table',this.aoTableData)
                                         }
                                     }
                                 }
@@ -456,16 +453,15 @@ export default {
 
         },
         mouduleDbClickHandler: function(oList){
-            if(this.nowSelectedTds.length>0){
+            if(this.nowSelectedTds.length>0 && oList.src){
                 let _td = this.nowSelectedTds[0]
                 this.oConfigData[_td[0]][_td[1]].img = oList.src
-                //调用接口，更新表格数据
+                //更新表格数据
                 this.oConfigData[_td[0]][_td[1]].list.push({
                     module: oList.text,
                     mutual: "轮播",
                     cycle: "60"
                 })
-                // console.log(this.oConfigData[_td[0]][_td[1]].list)
             }
         },
         saveHandler: function(){
@@ -475,8 +471,9 @@ export default {
                     sceneId: this.sceneId,
                     schemeJson: JSON.stringify(this.oConfigData)
                 }).then(res => {
-                    console.log(res)
-                    // this.$router.push('/plan')
+                    this.$Message.success('保存成功');
+                    //新建成功后，将标记改为1
+                    this.tag = 1
                 })
                 .catch(error => {
                     console.log('insert failed')
@@ -487,6 +484,7 @@ export default {
                     schemeId: this.schemeId,
                     schemeJson: JSON.stringify(this.oConfigData)
                 }).then(res => {
+                    this.$Message.success('保存成功');
                     console.log(res)
                     // this.$router.push('/plan')
                 })
